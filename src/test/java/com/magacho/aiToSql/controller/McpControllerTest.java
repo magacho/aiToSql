@@ -163,4 +163,70 @@ class McpControllerTest {
                 .andExpect(jsonPath("$.jsonrpc").value("2.0"))
                 .andExpect(jsonPath("$.error").exists());
     }
+
+    @Test
+    @DisplayName("POST /mcp with tools/call should return response metadata with token estimation")
+    void testToolsCallWithMetadata() throws Exception {
+        // Given - Call getSchemaStructure which returns data
+        JsonRpcRequest request = new JsonRpcRequest("tools/call", 
+                Map.of(
+                    "name", "getSchemaStructure",
+                    "arguments", Map.of()
+                ), 
+                7);
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // When / Then
+        mockMvc.perform(post("/mcp")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.jsonrpc").value("2.0"))
+                .andExpect(jsonPath("$.id").value(7))
+                .andExpect(jsonPath("$.result.content").isArray())
+                .andExpect(jsonPath("$.result.isError").value(false))
+                // Check metadata presence
+                .andExpect(jsonPath("$.result.meta").exists())
+                // Check token info
+                .andExpect(jsonPath("$.result.meta.tokens").exists())
+                .andExpect(jsonPath("$.result.meta.tokens.estimated").isNumber())
+                .andExpect(jsonPath("$.result.meta.tokens.estimated").value(greaterThan(0)))
+                .andExpect(jsonPath("$.result.meta.tokens.approximationMethod").value("character_count_div_4"))
+                .andExpect(jsonPath("$.result.meta.tokens.warning").exists())
+                // Check performance info
+                .andExpect(jsonPath("$.result.meta.performance").exists())
+                .andExpect(jsonPath("$.result.meta.performance.executionTimeMs").isNumber())
+                .andExpect(jsonPath("$.result.meta.performance.executionTimeMs").value(greaterThanOrEqualTo(0)))
+                .andExpect(jsonPath("$.result.meta.performance.cachedResult").isBoolean());
+    }
+
+    @Test
+    @DisplayName("POST /mcp with secureDatabaseQuery should return metadata with data info")
+    void testSecureDatabaseQueryWithDataInfo() throws Exception {
+        // Given - Call secureDatabaseQuery which returns QueryResult
+        JsonRpcRequest request = new JsonRpcRequest("tools/call", 
+                Map.of(
+                    "name", "secureDatabaseQuery",
+                    "arguments", Map.of(
+                        "queryDescription", "SELECT * FROM customers LIMIT 5",
+                        "maxRows", 5
+                    )
+                ), 
+                8);
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // When / Then
+        mockMvc.perform(post("/mcp")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.jsonrpc").value("2.0"))
+                .andExpect(jsonPath("$.result.meta").exists())
+                // Check data info (specific to QueryResult)
+                .andExpect(jsonPath("$.result.meta.data").exists())
+                .andExpect(jsonPath("$.result.meta.data.rowCount").isNumber())
+                .andExpect(jsonPath("$.result.meta.data.columnCount").isNumber())
+                .andExpect(jsonPath("$.result.meta.data.truncated").isBoolean())
+                .andExpect(jsonPath("$.result.meta.data.maxRowsLimit").value(1000));
+    }
 }

@@ -51,31 +51,31 @@
 
 ## 4 MCP Tools Implemented
 
-| # | Tool Name | Status | Purpose |
-|---|-----------|--------|---------|
-| 1 | `getSchemaStructure` | ✅ | Get complete database schema |
-| 2 | `getTableDetails` | ✅ | Get table indexes, FKs, constraints |
-| 3 | `listTriggers` | ✅ | List database triggers |
-| 4 | `secureDatabaseQuery` | ✅ | Execute SELECT queries safely |
+| # | Tool Name             | Status | Purpose                             |
+|---|-----------------------|--------|-------------------------------------|
+| 1 | `getSchemaStructure`  | ✅      | Get complete database schema        |
+| 2 | `getTableDetails`     | ✅      | Get table indexes, FKs, constraints |
+| 3 | `listTriggers`        | ✅      | List database triggers              |
+| 4 | `secureDatabaseQuery` | ✅      | Execute SELECT queries safely       |
 
 ## Security Features Implemented
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| READ-ONLY User | ✅ | Database user with SELECT-only permissions |
-| Query Validation | ✅ | Regex-based SELECT-only enforcement |
-| Keyword Filtering | ✅ | Blocks DROP, DELETE, UPDATE, INSERT, etc. |
-| Result Limits | ✅ | Configurable max rows (default 1000) |
-| Audit Logging | ✅ | All queries and violations logged |
+| Feature           | Status | Description                                |
+|-------------------|--------|--------------------------------------------|
+| READ-ONLY User    | ✅      | Database user with SELECT-only permissions |
+| Query Validation  | ✅      | Regex-based SELECT-only enforcement        |
+| Keyword Filtering | ✅      | Blocks DROP, DELETE, UPDATE, INSERT, etc.  |
+| Result Limits     | ✅      | Configurable max rows (default 1000)       |
+| Audit Logging     | ✅      | All queries and violations logged          |
 
 ## Database Support
 
-| Database | Status | Triggers Support |
-|----------|--------|------------------|
-| PostgreSQL | ✅ | ✅ |
-| MySQL | ✅ | ✅ |
-| Oracle | ✅ | ✅ |
-| SQL Server | ✅ | ✅ |
+| Database   | Status | Triggers Support |
+|------------|--------|------------------|
+| PostgreSQL | ✅      | ✅                |
+| MySQL      | ✅      | ✅                |
+| Oracle     | ✅      | ✅                |
+| SQL Server | ✅      | ✅                |
 
 ## Next Steps to Run
 
@@ -198,7 +198,7 @@ PromptToSql/
 
 ## Key Features
 
-✅ **JSON-RPC 2.0 Protocol** - Standard MCP transport
+✅ **JSON-RPC 2.0 Protocol**—Standard MCP transport
 ✅ **Database Agnostic** - Works with Oracle, MySQL, PostgreSQL, MSSQL
 ✅ **Security First** - Multiple layers of SQL injection prevention
 ✅ **Production Ready** - Caching, connection pooling, error handling

@@ -1,6 +1,7 @@
 package com.magacho.aiToSql.controller;
 
 import com.magacho.aiToSql.config.McpServerConfig;
+import com.magacho.aiToSql.dto.ResponseMetadata;
 import com.magacho.aiToSql.jsonrpc.JsonRpcError;
 import com.magacho.aiToSql.jsonrpc.JsonRpcRequest;
 import com.magacho.aiToSql.jsonrpc.JsonRpcResponse;
@@ -138,6 +139,8 @@ public class McpController {
      */
     @SuppressWarnings("unchecked")
     private Map<String, Object> handleToolsCall(Object params) {
+        long startTime = System.currentTimeMillis();
+        
         if (!(params instanceof Map)) {
             throw new IllegalArgumentException("Invalid params format");
         }
@@ -151,13 +154,24 @@ public class McpController {
         }
 
         Object result = toolsRegistry.executeTool(toolName, arguments);
+        
+        long executionTime = System.currentTimeMillis() - startTime;
+        
+        // Create metadata with token estimation and performance info
+        ResponseMetadata metadata = ResponseMetadata.create(result, executionTime, false);
+        
+        String textResult = convertResultToText(result);
+        
+        log.info("Tool '{}' executed in {}ms, estimated tokens: {}", 
+                toolName, executionTime, metadata.tokens().estimated());
 
         return Map.of(
                 "content", java.util.List.of(Map.of(
                         "type", "text",
-                        "text", convertResultToText(result)
+                        "text", textResult
                 )),
-                "isError", false
+                "isError", false,
+                "meta", metadata
         );
     }
 
