@@ -19,7 +19,10 @@ import static org.assertj.core.api.Assertions.*;
  */
 @SpringBootTest
 @ActiveProfiles("test")
-@Sql(scripts = {"/test-schema.sql", "/test-data.sql"})
+@Sql(scripts = {"/test-schema.sql", "/test-data.sql"}, 
+     executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = "classpath:cleanup.sql", 
+     executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @DisplayName("SecureQueryService Integration Tests")
 class SecureQueryServiceTest {
 
