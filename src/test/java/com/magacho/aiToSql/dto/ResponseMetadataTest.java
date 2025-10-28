@@ -38,10 +38,10 @@ class ResponseMetadataTest {
     @Test
     void testEstimateTokens_JsonText() {
         String json = "{\"name\":\"John\",\"age\":30}";
-        // 25 characters → ~7 tokens (ceil(25/4) = 7)
+        // 24 characters → ~6 tokens (ceil(24/4) = 6)
         ResponseMetadata.TokenInfo tokenInfo = ResponseMetadata.estimateTokens(json);
         
-        assertEquals(7, tokenInfo.estimated());
+        assertEquals(6, tokenInfo.estimated());
     }
 
     @Test
@@ -58,6 +58,7 @@ class ResponseMetadataTest {
         QueryResult queryResult = new QueryResult(
                 "SELECT * FROM users",
                 100,
+                1000,
                 List.of("id", "name", "email"),
                 List.of(
                         Map.of("id", 1, "name", "Alice", "email", "alice@example.com"),
@@ -79,6 +80,7 @@ class ResponseMetadataTest {
         QueryResult queryResult = new QueryResult(
                 "SELECT * FROM large_table",
                 1000, // Exactly at limit
+                1000,
                 List.of("id", "data"),
                 List.of() // Data doesn't matter for this test
         );
@@ -103,6 +105,7 @@ class ResponseMetadataTest {
         QueryResult queryResult = new QueryResult(
                 "SELECT id, name FROM users LIMIT 10",
                 10,
+                1000,
                 List.of("id", "name"),
                 List.of(
                         Map.of("id", 1, "name", "Alice"),
@@ -164,10 +167,10 @@ class ResponseMetadataTest {
 
         ResponseMetadata.TokenInfo tokenInfo = ResponseMetadata.estimateTokens(jsonResponse);
 
-        // Character count: ~400 characters
-        // Expected tokens: ~100 (400/4)
-        assertTrue(tokenInfo.estimated() >= 90 && tokenInfo.estimated() <= 110,
-                "Token estimation should be close to 100 for this JSON (~400 chars)");
+        // Character count: ~331 characters
+        // Expected tokens: ~83 (331/4)
+        assertTrue(tokenInfo.estimated() >= 75 && tokenInfo.estimated() <= 90,
+                "Token estimation should be close to 83 for this JSON (~331 chars)");
     }
 
     @Test

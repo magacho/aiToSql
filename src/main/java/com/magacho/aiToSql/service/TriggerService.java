@@ -40,18 +40,21 @@ public class TriggerService {
 
         try (Connection connection = dataSource.getConnection()) {
             DatabaseMetaData metaData = connection.getMetaData();
-            String databaseType = metaData.getDatabaseProductName();
+            String databaseType = metaData.getDatabaseProductName().toUpperCase();
 
-            List<TriggerList.TriggerInfo> triggers = switch (databaseType.toUpperCase()) {
-                case String s when s.contains("POSTGRESQL") -> getPostgreSQLTriggers(tableName);
-                case String s when s.contains("MYSQL") -> getMySQLTriggers(tableName);
-                case String s when s.contains("ORACLE") -> getOracleTriggers(tableName);
-                case String s when s.contains("SQL SERVER") -> getMSSQLTriggers(tableName);
-                default -> {
-                    log.warn("Trigger listing not implemented for database type: {}", databaseType);
-                    yield new ArrayList<>();
-                }
-            };
+            List<TriggerList.TriggerInfo> triggers;
+            if (databaseType.contains("POSTGRESQL")) {
+                triggers = getPostgreSQLTriggers(tableName);
+            } else if (databaseType.contains("MYSQL")) {
+                triggers = getMySQLTriggers(tableName);
+            } else if (databaseType.contains("ORACLE")) {
+                triggers = getOracleTriggers(tableName);
+            } else if (databaseType.contains("SQL SERVER")) {
+                triggers = getMSSQLTriggers(tableName);
+            } else {
+                log.warn("Trigger listing not implemented for database type: {}", databaseType);
+                triggers = new ArrayList<>();
+            }
 
             log.info("Found {} triggers for table: {}", triggers.size(), tableName);
             return new TriggerList(tableName, triggers);
