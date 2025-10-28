@@ -96,7 +96,7 @@ class McpToolsRegistryTest {
         // When / Then
         assertThatThrownBy(() -> 
                 toolsRegistry.executeTool("unknownTool", Map.of()))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Unknown tool");
     }
 

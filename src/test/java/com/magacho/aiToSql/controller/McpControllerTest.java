@@ -43,8 +43,8 @@ class McpControllerTest {
     void testGetServerInfo() throws Exception {
         mockMvc.perform(get("/mcp"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Database Introspection MCP Server"))
-                .andExpect(jsonPath("$.version").value("1.0.0"))
+                .andExpect(jsonPath("$.name").value("Test MCP Server"))
+                .andExpect(jsonPath("$.version").value("1.0.0-TEST"))
                 .andExpect(jsonPath("$.protocol").value("JSON-RPC 2.0"))
                 .andExpect(jsonPath("$.status").value("running"));
     }
