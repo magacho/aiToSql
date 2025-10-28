@@ -42,8 +42,16 @@ WORKDIR /app
 # Copy the JAR from builder stage
 COPY --from=builder /app/target/*.jar app.jar
 
+# Copy entrypoint script (as root before switching user)
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Create non-root user for security
 RUN addgroup -S spring && adduser -S spring -G spring
+
+# Change ownership of app directory
+RUN chown -R spring:spring /app
+
 USER spring:spring
 
 # Expose port (default 8080, can be overridden with SERVER_PORT env var)
@@ -56,13 +64,14 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
 # Environment variables with default values
 ENV SERVER_PORT=8080 \
     CACHE_ENABLED=true \
-    SPRING_PROFILES_ACTIVE=docker
+    SPRING_PROFILES_ACTIVE=docker \
+    DB_URL="" \
+    DB_USERNAME="" \
+    DB_PASSWORD="" \
+    DB_TYPE=""
 
-# Run the application
-ENTRYPOINT ["java", \
-    "-Djava.security.egd=file:/dev/./urandom", \
-    "-Dserver.port=${SERVER_PORT}", \
-    "-jar", "app.jar"]
+# Run the application using entrypoint script
+ENTRYPOINT ["docker-entrypoint.sh"]
 
 # ============================================================================
 # USAGE EXAMPLES
