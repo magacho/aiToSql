@@ -177,12 +177,16 @@ class ResponseMetadataTest {
     void testRecordImmutability() {
         ResponseMetadata.TokenInfo tokenInfo = new ResponseMetadata.TokenInfo(
                 100,
+                0,
+                100,
                 "test_method",
                 "test warning"
         );
 
         // Records are immutable - values shouldn't change
         assertEquals(100, tokenInfo.estimated());
+        assertEquals(0, tokenInfo.inputTokens());
+        assertEquals(100, tokenInfo.outputTokens());
         assertEquals("test_method", tokenInfo.approximationMethod());
         assertEquals("test warning", tokenInfo.warning());
     }
@@ -209,14 +213,16 @@ class ResponseMetadataTest {
 
     @Test
     void testResponseMetadataRecord() {
-        ResponseMetadata.TokenInfo tokens = new ResponseMetadata.TokenInfo(100, "method", "warning");
+        ResponseMetadata.TokenInfo tokens = new ResponseMetadata.TokenInfo(100, 0, 100, "method", "warning");
+        ResponseMetadata.CostInfo cost = new ResponseMetadata.CostInfo(0.0015, "claude-3.5-sonnet", "test");
         ResponseMetadata.PerformanceInfo perf = new ResponseMetadata.PerformanceInfo(50L, false);
         ResponseMetadata.DataInfo data = new ResponseMetadata.DataInfo(10, 3, false, 1000);
 
-        ResponseMetadata metadata = new ResponseMetadata(tokens, perf, data);
+        ResponseMetadata metadata = new ResponseMetadata(tokens, perf, cost, data);
 
         assertEquals(tokens, metadata.tokens());
         assertEquals(perf, metadata.performance());
+        assertEquals(cost, metadata.cost());
         assertEquals(data, metadata.data());
     }
 }

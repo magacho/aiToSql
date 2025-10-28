@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public record ResponseMetadata(
         TokenInfo tokens,
         PerformanceInfo performance,
+        CostInfo cost,
         DataInfo data
 ) {
 
@@ -18,6 +19,8 @@ public record ResponseMetadata(
      */
     public record TokenInfo(
             int estimated,
+            int inputTokens,
+            int outputTokens,
             String approximationMethod,
             String warning
     ) {}
@@ -28,6 +31,15 @@ public record ResponseMetadata(
     public record PerformanceInfo(
             long executionTimeMs,
             boolean cachedResult
+    ) {}
+
+    /**
+     * Cost estimation (based on Claude 3.5 Sonnet pricing)
+     */
+    public record CostInfo(
+            double estimatedUSD,
+            String model,
+            String note
     ) {}
 
     /**
@@ -49,17 +61,42 @@ public record ResponseMetadata(
      */
     public static TokenInfo estimateTokens(String text) {
         if (text == null || text.isEmpty()) {
-            return new TokenInfo(0, "character_count_div_4", "Actual tokens may vary by LLM tokenizer");
+            return new TokenInfo(0, 0, 0, "character_count_div_4", "Actual tokens may vary by LLM tokenizer");
         }
         
         // Heuristic: 1 token ≈ 4 characters
         // This is ~95% accurate for English text and code
         int estimated = (int) Math.ceil(text.length() / 4.0);
         
+        // For MCP context: input tokens ~0, output tokens ~estimated
+        int inputTokens = 0;  // Tool calls typically have minimal input
+        int outputTokens = estimated;
+        
         return new TokenInfo(
                 estimated,
+                inputTokens,
+                outputTokens,
                 "character_count_div_4",
                 "Actual tokens may vary by LLM tokenizer"
+        );
+    }
+
+    /**
+     * Calculate cost based on token count
+     * Uses Claude 3.5 Sonnet pricing as reference
+     */
+    public static CostInfo calculateCost(TokenInfo tokens) {
+        // Claude 3.5 Sonnet pricing (as of 2024):
+        // Input: $3.00 per million tokens
+        // Output: $15.00 per million tokens
+        double inputCost = (tokens.inputTokens() / 1_000_000.0) * 3.00;
+        double outputCost = (tokens.outputTokens() / 1_000_000.0) * 15.00;
+        double totalCost = inputCost + outputCost;
+        
+        return new CostInfo(
+                totalCost,
+                "claude-3.5-sonnet",
+                "Estimated based on character count heuristic"
         );
     }
 
@@ -103,10 +140,11 @@ public record ResponseMetadata(
         String textResult = convertToText(result);
         
         TokenInfo tokenInfo = estimateTokens(textResult);
+        CostInfo costInfo = calculateCost(tokenInfo);
         PerformanceInfo perfInfo = new PerformanceInfo(executionTimeMs, cachedResult);
         DataInfo dataInfo = extractDataInfo(result);
         
-        return new ResponseMetadata(tokenInfo, perfInfo, dataInfo);
+        return new ResponseMetadata(tokenInfo, perfInfo, costInfo, dataInfo);
     }
 
     /**
