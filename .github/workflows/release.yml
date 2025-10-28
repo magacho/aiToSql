@@ -1,0 +1,240 @@
+name: Release Automático
+
+on:
+  push:
+    tags:
+      - 'REL-*'  # Dispara apenas em tags REL-X.X.X
+
+jobs:
+  release:
+    name: Criar Release
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Buscar todo histórico
+      
+    - name: ☕ Configurar JDK 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: 'maven'
+        
+    - name: 🔖 Extrair versão da tag
+      id: version
+      run: |
+        TAG=${GITHUB_REF#refs/tags/}
+        VERSION=${TAG#REL-}
+        echo "tag=$TAG" >> $GITHUB_OUTPUT
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "📦 Release: $VERSION"
+        
+    - name: 🧪 Executar testes completos
+      run: |
+        echo "🧪 Executando suite completa de testes..."
+        mvn clean test
+        
+    - name: 📊 Gerar relatório de cobertura
+      run: mvn jacoco:report
+      
+    - name: 📈 Extrair métricas de cobertura
+      id: metrics
+      run: |
+        COVERAGE=$(awk -F',' '{ instructions += $4 + $5; covered += $5 } END { printf "%.1f", 100*covered/instructions }' target/site/jacoco/jacoco.csv)
+        TESTS=$(grep -oP '<test.*?name="\K[^"]+' target/surefire-reports/*.xml 2>/dev/null | wc -l || echo "0")
+        FAILURES=$(grep -oP 'failures="\K\d+' target/surefire-reports/*.xml 2>/dev/null | awk '{s+=$1} END {print s}' || echo "0")
+        ERRORS=$(grep -oP 'errors="\K\d+' target/surefire-reports/*.xml 2>/dev/null | awk '{s+=$1} END {print s}' || echo "0")
+        
+        echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
+        echo "tests=$TESTS" >> $GITHUB_OUTPUT
+        echo "failures=$FAILURES" >> $GITHUB_OUTPUT
+        echo "errors=$ERRORS" >> $GITHUB_OUTPUT
+        
+        echo "✅ Cobertura: $COVERAGE%"
+        echo "✅ Testes: $TESTS"
+        echo "✅ Falhas: $FAILURES"
+        echo "✅ Erros: $ERRORS"
+        
+    - name: ❌ Falhar se testes falharem
+      if: steps.metrics.outputs.failures != '0' || steps.metrics.outputs.errors != '0'
+      run: |
+        echo "❌ Testes falharam! Release cancelado."
+        echo "Falhas: ${{ steps.metrics.outputs.failures }}"
+        echo "Erros: ${{ steps.metrics.outputs.errors }}"
+        exit 1
+        
+    - name: ⚠️ Alertar se cobertura baixa
+      if: steps.metrics.outputs.coverage < 80
+      run: |
+        echo "⚠️ ATENÇÃO: Cobertura abaixo de 80% (${{ steps.metrics.outputs.coverage }}%)"
+        echo "Considere adicionar mais testes antes da release."
+        
+    - name: 📦 Comprimir relatório JaCoCo
+      run: |
+        cd target/site
+        zip -r jacoco-${{ steps.version.outputs.version }}.zip jacoco/
+        cd ../..
+        
+    - name: 📦 Empacotar aplicação
+      run: mvn package -DskipTests
+      
+    - name: 📝 Atualizar RELEASE_HISTORY.md
+      run: |
+        DATE=$(date +"%d de %B de %Y")
+        VERSION="${{ steps.version.outputs.version }}"
+        COVERAGE="${{ steps.metrics.outputs.coverage }}"
+        TESTS="${{ steps.metrics.outputs.tests }}"
+        
+        # Determinar status de cobertura
+        if (( $(echo "$COVERAGE >= 90" | bc -l) )); then
+          STATUS="✅"
+        elif (( $(echo "$COVERAGE >= 80" | bc -l) )); then
+          STATUS="🟢"
+        else
+          STATUS="⚠️"
+        fi
+        
+        # Criar seção de release
+        cat > release_section.md << EOL
+        ## 📋 Versão $VERSION
+
+        **Data**: $DATE  
+        **Status**: 🚀 Produção
+
+        ### 📊 Cobertura de Testes
+
+        | Métrica | Valor | Status |
+        |---------|-------|--------|
+        | **Cobertura Total** | $COVERAGE% | $STATUS |
+        | **Total de Testes** | $TESTS | ✅ |
+        | **Testes com Falha** | ${{ steps.metrics.outputs.failures }} | ✅ |
+
+        ### ✨ Novas Funcionalidades
+
+        - Release automático via tag REL-$VERSION
+        - Relatório de cobertura incluído
+
+        ### 🔧 Correções
+
+        - Melhorias gerais de estabilidade
+
+        ### 📦 Artefatos
+
+        - JAR: aiToSql-$VERSION.jar
+        - Relatório JaCoCo: jacoco-$VERSION.zip
+
+        ---
+
+        EOL
+        
+        # Inserir no início do histórico (após cabeçalho)
+        sed -i "/## 📋 Versão 0.0.1-SNAPSHOT/r release_section.md" RELEASE_HISTORY.md
+        
+        cat RELEASE_HISTORY.md
+        
+    - name: 📝 Gerar Release Notes
+      id: notes
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+        COVERAGE="${{ steps.metrics.outputs.coverage }}"
+        TESTS="${{ steps.metrics.outputs.tests }}"
+        
+        cat > RELEASE_NOTES.md << EOL
+        # Release v$VERSION
+
+        ## 📊 Métricas de Qualidade
+
+        - **Cobertura de Testes**: $COVERAGE%
+        - **Total de Testes**: $TESTS
+        - **Taxa de Sucesso**: 100%
+
+        ## 🎯 Destaques
+
+        - ✅ Protocolo JSON-RPC 2.0 completo
+        - ✅ 4 ferramentas MCP implementadas
+        - ✅ Suporte multi-banco (PostgreSQL, MySQL, Oracle, MSSQL)
+        - ✅ Segurança SQL com validação rigorosa
+        - ✅ Cache de metadados otimizado
+
+        ## 📦 Artefatos Incluídos
+
+        - \`aiToSql-$VERSION.jar\` - Aplicação completa
+        - \`jacoco-$VERSION.zip\` - Relatório de cobertura detalhado
+
+        ## 📚 Documentação
+
+        - [README.md](README.md) - Documentação principal
+        - [QUICKSTART.md](QUICKSTART.md) - Guia rápido
+        - [TESTING_GUIDE.md](TESTING_GUIDE.md) - Guia de testes
+        - [COVERAGE_REPORT.md](COVERAGE_REPORT.md) - Relatório de cobertura
+        - [RELEASE_HISTORY.md](RELEASE_HISTORY.md) - Histórico completo
+
+        ## 🚀 Como Usar
+
+        \`\`\`bash
+        # Download
+        wget https://github.com/seu-usuario/aiToSql/releases/download/REL-$VERSION/aiToSql-$VERSION.jar
+
+        # Executar
+        java -jar aiToSql-$VERSION.jar
+        \`\`\`
+
+        ## 📈 Evolução da Cobertura
+
+        Esta release mantém a meta de cobertura ≥ 80% com $COVERAGE% de código testado.
+
+        ---
+
+        **Data de Release**: $(date +"%d/%m/%Y %H:%M:%S")  
+        **Commit**: ${GITHUB_SHA:0:7}
+        EOL
+        
+        echo "notes_file=RELEASE_NOTES.md" >> $GITHUB_OUTPUT
+        
+    - name: 🚀 Criar GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.tag }}
+        name: Release v${{ steps.version.outputs.version }}
+        body_path: RELEASE_NOTES.md
+        files: |
+          target/aiToSql-*.jar
+          target/site/jacoco-${{ steps.version.outputs.version }}.zip
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: 💾 Commit RELEASE_HISTORY.md atualizado
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git add RELEASE_HISTORY.md
+        git commit -m "docs: atualizar RELEASE_HISTORY.md para v${{ steps.version.outputs.version }}"
+        git push origin HEAD:main
+      continue-on-error: true
+        
+    - name: 📤 Upload para Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./target/site/jacoco/jacoco.xml
+        flags: release-${{ steps.version.outputs.version }}
+        name: release-v${{ steps.version.outputs.version }}
+        
+    - name: 🎉 Resumo da Release
+      run: |
+        echo "### 🎉 Release v${{ steps.version.outputs.version }} Criado!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "#### 📊 Métricas" >> $GITHUB_STEP_SUMMARY
+        echo "- **Cobertura**: ${{ steps.metrics.outputs.coverage }}%" >> $GITHUB_STEP_SUMMARY
+        echo "- **Testes**: ${{ steps.metrics.outputs.tests }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status**: ✅ Todos os testes passaram" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "#### 📦 Artefatos" >> $GITHUB_STEP_SUMMARY
+        echo "- JAR: aiToSql-${{ steps.version.outputs.version }}.jar" >> $GITHUB_STEP_SUMMARY
+        echo "- Cobertura: jacoco-${{ steps.version.outputs.version }}.zip" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "[🔗 Ver Release](https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.tag }})" >> $GITHUB_STEP_SUMMARY

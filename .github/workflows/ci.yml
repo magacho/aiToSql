@@ -1,0 +1,84 @@
+name: CI - Testes Automáticos
+
+on:
+  push:
+    branches: [ '**' ]  # Todos os branches
+  pull_request:
+    branches: [ '**' ]
+
+jobs:
+  test:
+    name: Executar Testes
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v3
+      
+    - name: ☕ Configurar JDK 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: 'maven'
+        
+    - name: 🧪 Executar testes
+      run: mvn clean test
+      
+    - name: 📊 Gerar relatório de cobertura
+      run: mvn jacoco:report
+      
+    - name: 📈 Extrair métricas
+      id: coverage
+      run: |
+        COVERAGE=$(awk -F',' '{ instructions += $4 + $5; covered += $5 } END { printf "%.1f", 100*covered/instructions }' target/site/jacoco/jacoco.csv)
+        TESTS=$(grep -oP '<test.*?name="\K[^"]+' target/surefire-reports/*.xml 2>/dev/null | wc -l || echo "0")
+        echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
+        echo "tests=$TESTS" >> $GITHUB_OUTPUT
+        echo "✅ Cobertura: $COVERAGE%"
+        echo "✅ Testes: $TESTS"
+        
+    - name: 📤 Upload relatório de cobertura
+      uses: actions/upload-artifact@v3
+      with:
+        name: jacoco-report-${{ github.sha }}
+        path: target/site/jacoco/
+        retention-days: 30
+        
+    - name: 💬 Comentar PR (se aplicável)
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const coverage = '${{ steps.coverage.outputs.coverage }}';
+          const tests = '${{ steps.coverage.outputs.tests }}';
+          const status = coverage >= 80 ? '✅' : '⚠️';
+          
+          const comment = `## 📊 Relatório de Testes
+          
+          ${status} **Cobertura**: ${coverage}% (meta: ≥80%)
+          🧪 **Testes**: ${tests} executados
+          
+          📁 Relatório completo disponível em Artifacts
+          
+          ---
+          _Commit: ${context.sha.substring(0, 7)}_
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+          
+    - name: ✅ Verificar cobertura mínima
+      run: mvn jacoco:check
+      
+    - name: 📝 Resumo
+      run: |
+        echo "### 📊 Resultados dos Testes" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Cobertura**: ${{ steps.coverage.outputs.coverage }}%" >> $GITHUB_STEP_SUMMARY
+        echo "- **Testes**: ${{ steps.coverage.outputs.tests }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status**: ${{ steps.coverage.outputs.coverage >= 80 && '✅ Aprovado' || '⚠️ Abaixo da meta' }}" >> $GITHUB_STEP_SUMMARY
