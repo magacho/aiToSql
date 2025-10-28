@@ -51,6 +51,36 @@ com.magacho.aiToSql
     └── QueryResult.java
 ```
 
+## 🚀 Quick Start
+
+### Option 1: Docker (Recommended) 🐳
+
+The easiest way to run the MCP Server is using Docker:
+
+```bash
+# Pull the image from Docker Hub
+docker pull magacho/aitosql-mcp-server:latest
+
+# Run with PostgreSQL
+docker run -d \
+  --name aitosql-mcp \
+  -e DB_URL="jdbc:postgresql://your-host:5432/your_db" \
+  -e DB_USERNAME="readonly_user" \
+  -e DB_PASSWORD="your_password" \
+  -e DB_TYPE="PostgreSQL" \
+  -p 8080:8080 \
+  magacho/aitosql-mcp-server:latest
+
+# Test the server
+curl http://localhost:8080/mcp/tools/list
+```
+
+📖 **[Full Docker Deployment Guide](DOCKER_DEPLOYMENT.md)**
+
+---
+
+### Option 2: Build from Source
+
 ## Prerequisites
 
 1. **Java 21+** installed

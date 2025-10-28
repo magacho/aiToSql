@@ -48,16 +48,134 @@ Este roadmap define a evolução do **aiToSql MCP Server** de um MVP funcional p
 
 ---
 
-## 🚀 Fase Atual - v0.2.0: Integração com LLMs Reais
+## 🚀 Fase Atual - v0.2.0: Containerização e Deploy
 
-**Objetivo**: Conectar com APIs de LLMs para Text-to-SQL e análise inteligente  
+**Objetivo**: Criar container Docker e publicar no Docker Hub para fácil deployment  
 **Prioridade**: 🔴 CRÍTICA  
-**Prazo**: 3-4 semanas  
+**Prazo**: 1-2 semanas  
 **Status**: 🔄 EM PROGRESSO  
 **Meta de Cobertura**: 78%
 
-### 2.1 Integração com APIs de LLMs 🤖
+### 2.1 Docker Container e Docker Hub 🐳
 **Prioridade**: CRÍTICA  
+**Estimativa**: 1 semana
+
+#### Tarefas:
+- [ ] **Dockerfile Multi-Stage** (2 dias)
+  - Build stage com Maven
+  - Runtime stage com JRE 17 (alpine slim)
+  - Otimização de layers para cache
+  - Health check endpoint
+  - Testes de build local
+  
+- [ ] **Configuração Parametrizada via ENV** (2 dias)
+  - Parâmetros de conexão via variáveis de ambiente:
+    - `DB_URL` - URL JDBC (ex: jdbc:postgresql://host:5432/db)
+    - `DB_USERNAME` - Usuário do banco (read-only recomendado)
+    - `DB_PASSWORD` - Senha do banco
+    - `DB_DRIVER` - Driver JDBC (ex: org.postgresql.Driver)
+    - `DB_TYPE` - Tipo do banco (PostgreSQL, MySQL, Oracle, MSSQL)
+    - `SERVER_PORT` - Porta do servidor (default: 8080)
+    - `CACHE_ENABLED` - Habilitar cache (default: true)
+  - Validação de variáveis obrigatórias na inicialização
+  - Suporte a secrets via Docker secrets ou Kubernetes secrets
+  - Testes com diferentes bancos
+  
+- [ ] **Docker Compose para Testes Locais** (1 dia)
+  - docker-compose.yml com MCP Server + PostgreSQL
+  - docker-compose.yml com MCP Server + MySQL
+  - Scripts de inicialização de banco (schema de exemplo)
+  - Volume mounting para persistência
+  
+- [ ] **Publicação no Docker Hub** (1 dia)
+  - Criar repositório: `magacho/aitosql-mcp-server`
+  - Tags semânticas: `latest`, `0.2.0`, `0.2`, `0`
+  - GitHub Actions para build e push automático
+  - Multi-architecture support (amd64, arm64)
+  - README.md detalhado no Docker Hub
+  
+- [ ] **Suporte Multi-Database Drivers** (1 dia)
+  - Incluir drivers no container: PostgreSQL, MySQL, Oracle, MSSQL
+  - Seleção automática de driver baseado em DB_TYPE
+  - Fallback para DB_DRIVER customizado
+  - Testes com cada driver
+
+#### Deliverables:
+- ✅ Dockerfile otimizado (< 200MB)
+- ✅ docker-compose.yml para cada banco suportado
+- ✅ Imagem publicada no Docker Hub: `magacho/aitosql-mcp-server`
+- ✅ GitHub Actions para CI/CD de imagens Docker
+- ✅ Documentação de deployment (DOCKER_DEPLOYMENT.md)
+- ✅ Guia de uso com exemplos de cada banco
+- ✅ Script de teste: `test-docker-deployment.sh`
+
+**Impacto na Cobertura**: +2% (novos testes de configuração e validação)
+
+#### Exemplo de Uso:
+```bash
+# PostgreSQL
+docker run -d \
+  -e DB_URL="jdbc:postgresql://postgres:5432/mydb" \
+  -e DB_USERNAME="readonly_user" \
+  -e DB_PASSWORD="secure_password" \
+  -e DB_TYPE="PostgreSQL" \
+  -p 8080:8080 \
+  magacho/aitosql-mcp-server:latest
+
+# MySQL
+docker run -d \
+  -e DB_URL="jdbc:mysql://mysql:3306/mydb" \
+  -e DB_USERNAME="readonly_user" \
+  -e DB_PASSWORD="secure_password" \
+  -e DB_TYPE="MySQL" \
+  -p 8080:8080 \
+  magacho/aitosql-mcp-server:latest
+
+# Com Docker Compose
+docker-compose up -d
+```
+
+---
+
+### 2.2 Kubernetes Deployment (Opcional) ☸️
+**Prioridade**: BAIXA  
+**Estimativa**: 3 dias
+
+#### Tarefas:
+- [ ] **Helm Chart** (2 dias)
+  - Chart para deployment no Kubernetes
+  - ConfigMap para variáveis de ambiente
+  - Secrets para credenciais
+  - Service + Ingress
+  - HorizontalPodAutoscaler
+  - Testes em Minikube
+  
+- [ ] **Manifests YAML** (1 dia)
+  - deployment.yaml
+  - service.yaml
+  - configmap.yaml
+  - secret.yaml
+  - Documentação de deploy K8s
+
+#### Deliverables:
+- ✅ Helm chart publicado
+- ✅ Manifests YAML de exemplo
+- ✅ Documentação K8s (KUBERNETES_DEPLOYMENT.md)
+
+**Impacto na Cobertura**: +0%
+
+---
+
+## 🤖 Próxima Fase - v0.3.0: Integração com LLMs Reais
+
+**Objetivo**: Conectar com APIs de LLMs para Text-to-SQL e análise inteligente  
+**Prioridade**: 🟡 ALTA  
+**Prazo**: 3-4 semanas  
+**Status**: ⏳ PLANEJADO  
+**Meta de Cobertura**: 82%
+
+### 3.1 Integração com APIs de LLMs 🤖
+**Prioridade**: ALTA  
 **Estimativa**: 2 semanas
 
 #### Tarefas:
@@ -94,11 +212,11 @@ Este roadmap define a evolução do **aiToSql MCP Server** de um MVP funcional p
 - ✅ Testes unitários + integração (mock)
 - ✅ Documentação de setup para cada provider
 
-**Impacto na Cobertura**: +2% (novos testes de integração LLM)
+**Impacto na Cobertura**: +2%
 
 ---
 
-### 2.2 Text-to-SQL Intelligence 🧠
+### 3.2 Text-to-SQL Intelligence 🧠
 **Prioridade**: ALTA  
 **Estimativa**: 1.5 semanas
 
@@ -131,11 +249,11 @@ Este roadmap define a evolução do **aiToSql MCP Server** de um MVP funcional p
 - ✅ Documentação de prompts e accuracy
 - ✅ Comparação de accuracy entre LLMs (OpenAI vs Claude vs Gemini)
 
-**Impacto na Cobertura**: +2% (novos testes de NL-to-SQL)
+**Impacto na Cobertura**: +2%
 
 ---
 
-### 2.3 Cost Tracking Dashboard 💰
+### 3.3 Cost Tracking Dashboard 💰
 **Prioridade**: MÉDIA  
 **Estimativa**: 1 semana
 
@@ -166,19 +284,19 @@ Este roadmap define a evolução do **aiToSql MCP Server** de um MVP funcional p
 - ✅ Testes de analytics
 - ✅ Documentação de uso
 
-**Impacto na Cobertura**: +0% (analytics não crítico para cobertura)
+**Impacto na Cobertura**: +0%
 
 ---
 
-## 🔒 Próxima Fase - v0.3.0: Segurança e Produção
+## 🔒 Próxima Fase - v0.4.0: Segurança e Produção
 
 **Objetivo**: Tornar o servidor production-ready com auth, rate limiting e compliance  
-**Prioridade**: 🟡 ALTA  
+**Prioridade**: 🟢 MÉDIA  
 **Prazo**: 2-3 semanas  
 **Status**: ⏳ PLANEJADO  
-**Meta de Cobertura**: 82%
+**Meta de Cobertura**: 86%
 
-### 3.1 Autenticação e Autorização 🔐
+### 4.1 Autenticação e Autorização 🔐
 **Prioridade**: CRÍTICA  
 **Estimativa**: 1 semana
 
@@ -212,7 +330,7 @@ Este roadmap define a evolução do **aiToSql MCP Server** de um MVP funcional p
 
 ---
 
-### 3.2 Rate Limiting e Throttling 🚦
+### 4.2 Rate Limiting e Throttling 🚦
 **Prioridade**: ALTA  
 **Estimativa**: 4 dias
 
@@ -246,7 +364,7 @@ Este roadmap define a evolução do **aiToSql MCP Server** de um MVP funcional p
 
 ---
 
-### 3.3 Audit Logging e Compliance 📝
+### 4.3 Audit Logging e Compliance 📝
 **Prioridade**: MÉDIA  
 **Estimativa**: 1 semana
 
@@ -279,28 +397,28 @@ Este roadmap define a evolução do **aiToSql MCP Server** de um MVP funcional p
 
 ---
 
-## ⚡ Futuro - v0.4.0: Performance e Escalabilidade
+## ⚡ Futuro - v0.5.0: Performance e Escalabilidade
 
 **Objetivo**: Otimizar para alta carga e múltiplos tenants  
 **Prioridade**: 🟢 MÉDIA  
 **Prazo**: 2-3 semanas  
 **Status**: 🔮 FUTURO  
-**Meta de Cobertura**: 86%
+**Meta de Cobertura**: 90%
 
 ### Resumo de Features:
 
-#### 4.1 Cache Distribuído (Redis)
+#### 5.1 Cache Distribuído (Redis)
 - Migrar de Caffeine para Redis
 - Cache de schema, query results, respostas LLM
 - Smart invalidation
 - Multi-layer caching (L1: local, L2: Redis)
 
-#### 4.2 Async Processing
+#### 5.2 Async Processing
 - Queries longas em background
 - WebSocket streaming de resultados
 - Message queue (RabbitMQ/Kafka)
 
-#### 4.3 Multi-Tenancy
+#### 5.3 Multi-Tenancy
 - Isolamento por tenant
 - Dynamic datasource management
 - Tenant-specific settings (LLM provider, budget, rate limits)
@@ -310,27 +428,27 @@ Este roadmap define a evolução do **aiToSql MCP Server** de um MVP funcional p
 
 ---
 
-## 📊 Futuro - v0.5.0: Observabilidade Avançada
+## 📊 Futuro - v0.6.0: Observabilidade Avançada
 
 **Objetivo**: Monitoring, metrics e alertas production-grade  
 **Prioridade**: 🟢 MÉDIA  
 **Prazo**: 1-2 semanas  
 **Status**: 🔮 FUTURO  
-**Meta de Cobertura**: 88%
+**Meta de Cobertura**: 92%
 
 ### Resumo de Features:
 
-#### 5.1 Prometheus & Grafana
+#### 6.1 Prometheus & Grafana
 - Endpoint `/actuator/prometheus`
 - Dashboards Grafana (overview, custos, performance, segurança)
 - Custom metrics (queries/min, custo/hora, cache hit rate)
 
-#### 5.2 Distributed Tracing
+#### 6.2 Distributed Tracing
 - Zipkin/Jaeger integration
 - OpenTelemetry support
 - End-to-end trace de requisições
 
-#### 5.3 Alertas e SLOs
+#### 6.3 Alertas e SLOs
 - Alertas via Slack/Email/PagerDuty
 - SLO definition (uptime, latência, error rate)
 - Anomaly detection básica
@@ -340,29 +458,29 @@ Este roadmap define a evolução do **aiToSql MCP Server** de um MVP funcional p
 
 ---
 
-## 🎨 Futuro - v0.6.0: Developer Experience
+## 🎨 Futuro - v0.7.0: Developer Experience
 
 **Objetivo**: Facilitar integração com SDKs, CLI e Web UI  
 **Prioridade**: 🔵 BAIXA  
 **Prazo**: 3-4 semanas  
 **Status**: 🔮 FUTURO  
-**Meta de Cobertura**: 90%
+**Meta de Cobertura**: 94%
 
 ### Resumo de Features:
 
-#### 6.1 SDKs e Clients
+#### 7.1 SDKs e Clients
 - Python SDK (PyPI)
 - TypeScript/JavaScript SDK (NPM)
 - Go Client
 - CLI Tool (brew, apt, chocolatey)
 
-#### 6.2 Web Dashboard
+#### 7.2 Web Dashboard
 - Schema Explorer UI (React + TypeScript)
 - SQL Query Builder
 - Natural Language chat interface
 - Monitoring dashboard
 
-#### 6.3 Documentação Interativa
+#### 7.3 Documentação Interativa
 - OpenAPI/Swagger UI
 - Interactive tutorials
 - Code examples library
@@ -379,28 +497,32 @@ Este roadmap define a evolução do **aiToSql MCP Server** de um MVP funcional p
 │
 ├─ Oct 28 ✅ v0.1.0: MVP + Tokenização + Métricas
 │
-├─ Nov 2024 🔄 v0.2.0: Integração LLMs Reais (OpenAI, Claude, Gemini, Ollama)
+├─ Nov 2024 🔄 v0.2.0: Docker Container + Docker Hub
+│   ├─ Week 1: Dockerfile multi-stage + ENV config
+│   └─ Week 2: Docker Compose + Docker Hub publish + Multi-DB drivers
+
+2024 Q4/2025 Q1
+│
+├─ Dec 2024 ⏳ v0.3.0: Integração LLMs (OpenAI, Claude, Gemini, Ollama)
 │   ├─ Week 1: OpenAI GPT-4 integration
 │   ├─ Week 2: Claude, Gemini, Ollama
 │   ├─ Week 3: Text-to-SQL (naturalLanguageQuery, explainQuery)
 │   └─ Week 4: Cost dashboard
-
-2024 Q4/2025 Q1
 │
-├─ Dec 2024 ⏳ v0.3.0: Segurança (Auth, Rate Limiting, Audit)
+├─ Jan 2025 ⏳ v0.4.0: Segurança (Auth, Rate Limiting, Audit)
 │   ├─ Week 1: API Key auth + RBAC
 │   ├─ Week 2: Rate limiting + Cost throttling
 │   └─ Week 3: Audit logging + Compliance
 │
-├─ Jan 2025 🔮 v0.4.0: Performance (Redis, Async, Multi-tenancy)
+├─ Feb 2025 🔮 v0.5.0: Performance (Redis, Async, Multi-tenancy)
 │   ├─ Week 1: Redis cache
 │   ├─ Week 2: Async processing
 │   └─ Week 3-4: Multi-tenancy
 │
-├─ Feb 2025 🔮 v0.5.0: Observabilidade (Prometheus, Grafana, Alertas)
+├─ Mar 2025 🔮 v0.6.0: Observabilidade (Prometheus, Grafana, Alertas)
 │   └─ 1-2 weeks
 │
-└─ Mar 2025 🔮 v0.6.0: Developer Experience (SDKs, CLI, Web UI)
+└─ Apr 2025 🔮 v0.7.0: Developer Experience (SDKs, CLI, Web UI)
     └─ 3-4 weeks
 ```
 
@@ -417,32 +539,40 @@ Este roadmap define a evolução do **aiToSql MCP Server** de um MVP funcional p
 
 ### v0.2.0 🎯 METAS
 - 🎯 Cobertura: 78%
+- 🎯 Imagem Docker < 200MB
+- 🎯 Suporte a 4 bancos (PostgreSQL, MySQL, Oracle, MSSQL)
+- 🎯 Docker Compose funcional
+- 🎯 Publicação no Docker Hub: `magacho/aitosql-mcp-server`
+- 🎯 Configuração 100% via ENV vars
+
+### v0.3.0 🎯 METAS
+- 🎯 Cobertura: 82%
 - 🎯 Integração com 4 LLM providers
 - 🎯 Text-to-SQL accuracy > 80%
 - 🎯 Tempo médio < 150ms (inclui chamadas LLM)
 - 🎯 Cost tracking real implementado
 
-### v0.3.0 🎯 METAS
-- 🎯 Cobertura: 82%
+### v0.4.0 🎯 METAS
+- 🎯 Cobertura: 86%
 - 🎯 Autenticação funcional
 - 🎯 Rate limiting: 100 req/min/user
 - 🎯 Audit log completo
 - 🎯 Zero vulnerabilidades críticas
 
-### v0.4.0 🎯 METAS
-- 🎯 Cobertura: 86%
+### v0.5.0 🎯 METAS
+- 🎯 Cobertura: 90%
 - 🎯 Cache hit rate > 60%
 - 🎯 Suporte a 10+ tenants
 - 🎯 Async queries funcionais
 
-### v0.5.0 🎯 METAS
-- 🎯 Cobertura: 88%
+### v0.6.0 🎯 METAS
+- 🎯 Cobertura: 92%
 - 🎯 Uptime > 99.9%
 - 🎯 Latência p95 < 200ms
 - 🎯 Prometheus + Grafana dashboards
 
-### v0.6.0 🎯 METAS
-- 🎯 Cobertura: 90%
+### v0.7.0 🎯 METAS
+- 🎯 Cobertura: 94%
 - 🎯 3+ SDKs publicados
 - 🎯 CLI tool funcional
 - 🎯 Web UI completa

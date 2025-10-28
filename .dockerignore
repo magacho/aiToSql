@@ -1,0 +1,81 @@
+# ============================================================================
+# .dockerignore - Files to exclude from Docker build context
+# ============================================================================
+# This file helps reduce build context size and build time by excluding
+# unnecessary files from being sent to the Docker daemon
+# ============================================================================
+
+# Git files
+.git
+.gitignore
+.github
+
+# IDE files
+.idea
+.vscode
+*.iml
+*.ipr
+*.iws
+
+# Build outputs (will be rebuilt in container)
+target/
+build/
+out/
+bin/
+
+# Test reports and coverage
+coverage/
+test-results/
+*.log
+*.tar.gz
+
+# Documentation (not needed in image)
+*.md
+docs/
+COMO_*.md
+STATUS_*.md
+RELEASE*.md
+ROADMAP*.md
+COVERAGE*.md
+END_TO_END*.md
+IMPLEMENTATION*.md
+NEXT_STEPS*.md
+PERFORMANCE*.md
+PROJECT_STATUS*.md
+TESTING*.md
+TOKENIZATION*.md
+
+# Scripts (not needed in image)
+*.sh
+!mvnw
+
+# Docker files (not needed in image)
+docker-compose*.yml
+Dockerfile
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+
+# Maven local repository cache (will be recreated)
+.m2/
+
+# Node modules (if any)
+node_modules/
+
+# Python files (if any)
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/

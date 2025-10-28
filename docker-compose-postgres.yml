@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: aitosql-postgres
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MCP Server
+  mcp-server:
+    build: .
+    container_name: aitosql-mcp-server
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Database Connection
+      DB_URL: jdbc:postgresql://postgres:5432/testdb
+      DB_USERNAME: readonly_user
+      DB_PASSWORD: readonly_password
+      DB_DRIVER: org.postgresql.Driver
+      DB_TYPE: PostgreSQL
+      
+      # Server Configuration
+      SERVER_PORT: 8080
+      CACHE_ENABLED: true
+      
+      # Spring Boot Configuration
+      SPRING_PROFILES_ACTIVE: docker
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_COM_MAGACHO: DEBUG
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
+    driver: local
+
+# ============================================================================
+# USAGE
+# ============================================================================
+#
+# Start services:
+#   docker-compose -f docker-compose-postgres.yml up -d
+#
+# View logs:
+#   docker-compose -f docker-compose-postgres.yml logs -f mcp-server
+#
+# Stop services:
+#   docker-compose -f docker-compose-postgres.yml down
+#
+# Stop and remove volumes:
+#   docker-compose -f docker-compose-postgres.yml down -v
+#
+# Test MCP Server:
+#   curl http://localhost:8080/mcp/tools/list
+#
+# ============================================================================

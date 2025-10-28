@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: aitosql-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: mysql_user
+      MYSQL_PASSWORD: mysql_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MCP Server
+  mcp-server:
+    build: .
+    container_name: aitosql-mcp-server
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      # Database Connection
+      DB_URL: jdbc:mysql://mysql:3306/testdb
+      DB_USERNAME: readonly_user
+      DB_PASSWORD: readonly_password
+      DB_DRIVER: com.mysql.cj.jdbc.Driver
+      DB_TYPE: MySQL
+      
+      # Server Configuration
+      SERVER_PORT: 8080
+      CACHE_ENABLED: true
+      
+      # Spring Boot Configuration
+      SPRING_PROFILES_ACTIVE: docker
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_COM_MAGACHO: DEBUG
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  mysql_data:
+    driver: local
+
+# ============================================================================
+# USAGE
+# ============================================================================
+#
+# Start services:
+#   docker-compose -f docker-compose-mysql.yml up -d
+#
+# View logs:
+#   docker-compose -f docker-compose-mysql.yml logs -f mcp-server
+#
+# Stop services:
+#   docker-compose -f docker-compose-mysql.yml down
+#
+# Stop and remove volumes:
+#   docker-compose -f docker-compose-mysql.yml down -v
+#
+# Test MCP Server:
+#   curl http://localhost:8080/mcp/tools/list
+#
+# ============================================================================
