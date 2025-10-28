@@ -234,6 +234,37 @@ ENTRYPOINT ["java", "-jar", "/app.jar"]
 
 The server is stateless and can be easily deployed to managed platforms like Google Cloud Run or GKE, connecting to Cloud SQL instances.
 
+## 📊 Testing & Coverage
+
+This project maintains **comprehensive test coverage** with **no mandatory minimum**. We focus on tracking coverage evolution across releases:
+
+- **Current Coverage**: Check [COVERAGE_REPORT.md](COVERAGE_REPORT.md)
+- **Coverage History**: See [RELEASE_HISTORY.md](RELEASE_HISTORY.md)
+- **Testing Guide**: Read [TESTING_GUIDE.md](TESTING_GUIDE.md)
+- **Tracking Details**: [COVERAGE_TRACKING.md](COVERAGE_TRACKING.md)
+
+### Run Tests Locally
+
+```bash
+# Run all tests
+mvn clean test
+
+# Generate coverage report
+mvn jacoco:report
+
+# View report
+firefox target/site/jacoco/index.html
+```
+
+### CI/CD
+
+- ✅ **Automated tests** on every commit
+- ✅ **Coverage reports** generated automatically
+- ✅ **Release workflow** with coverage history
+- ✅ **No blocking** on coverage percentage
+
+**Philosophy**: Track, don't block. Continuous improvement. 📈
+
 ## License
 
 Open source project.

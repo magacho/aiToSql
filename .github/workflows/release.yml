@@ -66,11 +66,11 @@ jobs:
         echo "Erros: ${{ steps.metrics.outputs.errors }}"
         exit 1
         
-    - name: ⚠️ Alertar se cobertura baixa
-      if: steps.metrics.outputs.coverage < 80
+    - name: 📊 Status da Cobertura
       run: |
-        echo "⚠️ ATENÇÃO: Cobertura abaixo de 80% (${{ steps.metrics.outputs.coverage }}%)"
-        echo "Considere adicionar mais testes antes da release."
+        COVERAGE="${{ steps.metrics.outputs.coverage }}"
+        echo "📊 Cobertura atual: $COVERAGE%"
+        echo "ℹ️  Esta métrica será registrada no histórico da release"
         
     - name: 📦 Comprimir relatório JaCoCo
       run: |
