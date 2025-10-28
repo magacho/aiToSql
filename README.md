@@ -68,14 +68,36 @@ docker run -d \
   -e DB_USERNAME="readonly_user" \
   -e DB_PASSWORD="your_password" \
   -e DB_TYPE="PostgreSQL" \
+  -e DB_DRIVER="org.postgresql.Driver" \
   -p 8080:8080 \
   magacho/aitosql-mcp-server:latest
 
 # Test the server
+curl http://localhost:8080/actuator/health
 curl http://localhost:8080/mcp/tools/list
 ```
 
-📖 **[Full Docker Deployment Guide](DOCKER_DEPLOYMENT.md)**
+**Or use Docker Compose for local development**:
+
+```bash
+# Clone the repository
+git clone https://github.com/magacho/aiToSql.git
+cd aiToSql
+
+# Start with PostgreSQL (or mysql, sqlserver)
+docker-compose -f docker-compose-postgres.yml up -d
+
+# View logs
+docker-compose -f docker-compose-postgres.yml logs -f mcp-server
+
+# Stop
+docker-compose -f docker-compose-postgres.yml down
+```
+
+📖 **Full Documentation**:
+- **[Docker Deployment Guide](DOCKER_DEPLOYMENT.md)** - Complete deployment instructions
+- **[Docker Build Guide](DOCKER_BUILD_GUIDE.md)** - How to build and publish
+- **[Quick Start Guide](QUICKSTART.md)** - Step-by-step tutorial
 
 ---
 
