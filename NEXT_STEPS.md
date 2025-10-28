@@ -1,483 +1,523 @@
-# 🎯 Próximos Passos Imediatos - aiToSql
+# 🚀 Próximos Passos - aiToSql MCP Server
 
-**Data**: 28 de Outubro de 2024  
-**Objetivo**: Guia prático para as próximas ações
+## Status Atual
 
----
-
-## 📋 Checklist Rápido
-
-### ✅ Já Concluído
-- [x] Projeto Spring Boot completo
-- [x] 26 testes automatizados
-- [x] CI/CD funcionando
-- [x] Documentação completa
-- [x] Repositório público no GitHub
-
-### 🔜 Próximas 48 horas
-
-#### 1. Criar Primeira Release (30 min) 🚀
-```bash
-cd /home/flavio.magacho/Dropbox/dev/PromptToSql
-
-# Criar tag
-git tag -a REL-0.0.1 -m "Release 0.0.1 - MVP com MCP Protocol completo
-
-Funcionalidades:
-- 4 ferramentas MCP (schema, tables, triggers, query)
-- Suporte multi-banco (PostgreSQL, MySQL, Oracle, MSSQL)
-- 26 testes automatizados (100% passando)
-- Segurança básica (READ-ONLY enforcement)
-- CI/CD com GitHub Actions
-
-Cobertura de testes: ~75% (será calculada automaticamente)
-"
-
-# Enviar para GitHub
-git push origin REL-0.0.1
-
-# Aguardar workflow (2-3 minutos)
-# Verificar release: https://github.com/magacho/aiToSql/releases
-```
-
-**Resultado esperado:**
-- ✅ Release publicada no GitHub
-- ✅ JAR disponível para download
-- ✅ Relatório de cobertura anexado
-- ✅ Cobertura registrada no RELEASE_HISTORY.md
+✅ **v0.1.0 publicada** (28/Out/2024)  
+✅ **31 testes passando (100%)**  
+✅ **Cobertura: 74%**  
+✅ **Tokenização local implementada**  
+✅ **Teste E2E completo (jornada full-stack)**  
+🔄 **Em desenvolvimento: v0.2.0**
 
 ---
 
-#### 2. Adicionar Badges ao README (10 min) 🏷️
+## 🎯 Objetivo da v0.2.0: Integração com LLMs Reais
 
-Editar `README.md` e adicionar no topo (após o título):
+Atualmente, temos **estimativas** de tokens e custos baseadas em aproximações (1 token ≈ 4 chars). 
 
-```markdown
-# PromptToSql - MCP Server
+**Precisamos integrar com APIs reais de LLMs para:**
+1. ✨ **Gerar SQL a partir de linguagem natural** (Text-to-SQL)
+2. 🎯 **Tokenização precisa** (usando contadores reais dos LLMs)
+3. 💰 **Custos reais** de API tracking
+4. 🧠 **Query explanation** (SQL → Linguagem Natural)
+5. 📊 **Query optimization suggestions**
 
-[![CI](https://github.com/magacho/aiToSql/actions/workflows/ci.yml/badge.svg)](https://github.com/magacho/aiToSql/actions/workflows/ci.yml)
-[![Coverage](https://github.com/magacho/aiToSql/actions/workflows/coverage.yml/badge.svg)](https://github.com/magacho/aiToSql/actions/workflows/coverage.yml)
-[![Release](https://img.shields.io/github/v/release/magacho/aiToSql)](https://github.com/magacho/aiToSql/releases)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.org/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green.svg)](https://spring.io/projects/spring-boot)
+---
 
-## Description
-...
+## 📅 Cronograma v0.2.0 (3-4 Semanas)
+
+### 🤖 Semana 1-2: Integração com APIs de LLMs
+
+#### 1. OpenAI GPT-4 Integration (5 dias) 🔴 CRÍTICO
+
+**Objetivos:**
+- Implementar client HTTP para OpenAI API
+- Tokenização real usando tiktoken-java (ou equivalente)
+- Geração de SQL a partir de linguagem natural
+- Cache de respostas para economizar custos
+- Tracking de custos real (não estimado)
+
+**Tasks:**
+```bash
+# Branch de trabalho
+git checkout -b feature/openai-integration
+
+# Adicionar dependência no pom.xml
+# <dependency>
+#   <groupId>com.theokanning.openai-gpt3-java</groupId>
+#   <artifactId>service</artifactId>
+#   <version>0.18.2</version>
+# </dependency>
+
+# Criar arquivos:
+# - src/main/java/com/magacho/aiToSql/llm/LLMProvider.java (interface)
+# - src/main/java/com/magacho/aiToSql/llm/OpenAIProvider.java (impl)
+# - src/main/java/com/magacho/aiToSql/service/LLMService.java
+# - src/test/java/com/magacho/aiToSql/llm/OpenAIProviderTest.java
 ```
 
-**Commit:**
-```bash
-git add README.md
-git commit -m "docs: adicionar badges de status ao README"
-git push
+**Entregáveis:**
+- [ ] Interface `LLMProvider` com métodos:
+  - `generateSQL(String naturalLanguage, String schemaContext)`
+  - `explainQuery(String sqlQuery)`
+  - `countTokens(String text)`
+  - `estimateCost(int tokens)`
+- [ ] `OpenAIProvider` implementado
+- [ ] `LLMService` para orquestração
+- [ ] Testes unitários (mock da API)
+- [ ] Testes de integração (chamada real, opcional)
+- [ ] Documentação: `docs/OPENAI_SETUP.md`
+
+**Configuração (application.properties):**
+```properties
+# OpenAI Configuration
+llm.provider=openai
+llm.openai.api-key=${OPENAI_API_KEY}
+llm.openai.model=gpt-4-turbo-preview
+llm.openai.max-tokens=2000
+llm.openai.temperature=0.0
 ```
 
 ---
 
-#### 3. Testar Aplicação Localmente (15 min) 🧪
+#### 2. Claude, Gemini e Ollama (5 dias)
 
-```bash
-# 1. Iniciar H2 em modo servidor (para testes)
-cd /home/flavio.magacho/Dropbox/dev/PromptToSql
-mvn spring-boot:run -Dspring-boot.run.profiles=test
+**Claude (Anthropic)** - 2 dias
+- [ ] `ClaudeProvider` implementation
+- [ ] Testes de integração
+- [ ] Comparação de performance vs GPT-4
 
-# 2. Em outro terminal, testar endpoints
-curl http://localhost:8080/mcp
+**Gemini (Google)** - 1 dia
+- [ ] `GeminiProvider` implementation
+- [ ] Testes básicos
 
-# 3. Testar ferramenta getSchemaStructure
-curl -X POST http://localhost:8080/mcp \
-  -H "Content-Type: application/json" \
-  -d '{
-    "jsonrpc": "2.0",
-    "method": "tools/call",
-    "params": {
-      "name": "getSchemaStructure",
-      "arguments": {}
+**Ollama (Local)** - 2 dias
+- [ ] `OllamaProvider` implementation
+- [ ] Suporte a Llama 3, Mistral, CodeLlama
+- [ ] Testes locais (sem custo)
+- [ ] Documentação de setup do Ollama
+
+**Configuração:**
+```properties
+# llm.provider=openai|claude|gemini|ollama
+
+# Claude
+llm.claude.api-key=${ANTHROPIC_API_KEY}
+llm.claude.model=claude-3-5-sonnet-20241022
+
+# Gemini
+llm.gemini.api-key=${GOOGLE_API_KEY}
+llm.gemini.model=gemini-1.5-pro
+
+# Ollama (local, sem API key)
+llm.ollama.base-url=http://localhost:11434
+llm.ollama.model=llama3.2
+```
+
+---
+
+### 🧠 Semana 3: Text-to-SQL Intelligence
+
+#### 3. Nova Ferramenta MCP: `naturalLanguageQuery` (4 dias) 🔴 CRÍTICO
+
+**Objetivo:** Permitir que usuários façam perguntas em linguagem natural e recebam SQL + resultados.
+
+**Flow:**
+```
+1. Usuário envia: "Quais são os 10 maiores clientes por valor de compras?"
+2. MCP chama getSchemaStructure (para contexto)
+3. MCP chama LLMService.generateSQL(pergunta, schema)
+4. LLM retorna: "SELECT c.name, SUM(o.total) FROM customers c..."
+5. MCP valida e executa SQL
+6. MCP retorna: SQL gerado + resultados + custo da operação
+```
+
+**Tasks:**
+- [ ] Criar `NaturalLanguageQueryService`
+- [ ] Adicionar ferramenta `naturalLanguageQuery` no `McpToolsRegistry`
+- [ ] Prompt engineering:
+  ```
+  System: Você é um especialista em SQL. Dado o schema:
+  {schema}
+  
+  Gere uma query SQL válida para a pergunta:
+  {question}
+  
+  Retorne APENAS o SQL, sem explicações.
+  ```
+- [ ] Validação de SQL gerado (mesmo processo de `secureDatabaseQuery`)
+- [ ] Refinamento iterativo (se SQL inválido, retry com erro como contexto)
+- [ ] Testes E2E com perguntas reais
+
+**Parâmetros:**
+```json
+{
+  "name": "naturalLanguageQuery",
+  "description": "Execute queries usando linguagem natural",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "question": {
+        "type": "string",
+        "description": "Pergunta em linguagem natural"
+      },
+      "maxRows": {
+        "type": "integer",
+        "default": 100
+      }
     },
-    "id": 1
-  }'
+    "required": ["question"]
+  }
+}
+```
+
+**Retorno:**
+```json
+{
+  "content": [{
+    "type": "text",
+    "text": "{
+      \"generatedSQL\": \"SELECT ...\",
+      \"results\": [...],
+      \"rowCount\": 10,
+      \"llmProvider\": \"openai\",
+      \"llmModel\": \"gpt-4-turbo\",
+      \"tokensUsed\": 1250,
+      \"costUSD\": 0.0375
+    }"
+  }]
+}
 ```
 
 ---
 
-### 🔜 Próxima Semana (Prioridade ALTA)
+#### 4. Nova Ferramenta: `explainQuery` (2 dias)
 
-#### 4. Adicionar LICENSE (10 min) 📄
+**Objetivo:** Receber SQL e retornar explicação em linguagem natural.
 
-Escolher licença apropriada:
-
-**Opção A - MIT License (Mais Permissiva):**
-```bash
-cat > LICENSE << 'EOL'
-MIT License
-
-Copyright (c) 2024 magacho
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-EOL
-
-git add LICENSE
-git commit -m "docs: adicionar MIT License"
-git push
+**Exemplo:**
 ```
+Input: SELECT c.name, SUM(o.total) FROM customers c JOIN orders o ON c.id = o.customer_id GROUP BY c.name ORDER BY SUM(o.total) DESC LIMIT 10
 
-**Opção B - Apache 2.0 (Mais Enterprise):**
-- Usar https://choosealicense.com/licenses/apache-2.0/
-
----
-
-#### 5. Criar CONTRIBUTING.md (20 min) 🤝
-
-```markdown
-# Como Contribuir
-
-Obrigado pelo interesse em contribuir! 🎉
-
-## 🐛 Reportar Bugs
-
-Abra uma [issue](https://github.com/magacho/aiToSql/issues) com:
-- Descrição clara do problema
-- Passos para reproduzir
-- Comportamento esperado vs atual
-- Ambiente (OS, Java version, banco de dados)
-
-## ✨ Sugerir Features
-
-Abra uma [issue](https://github.com/magacho/aiToSql/issues) com:
-- Descrição da feature
-- Casos de uso
-- Benefícios esperados
-
-## 🔧 Enviar Pull Requests
-
-1. Fork o projeto
-2. Crie uma branch: `git checkout -b feature/minha-feature`
-3. Faça suas alterações
-4. Adicione testes
-5. Execute: `mvn clean test` (todos devem passar)
-6. Commit: `git commit -m "feat: adicionar minha feature"`
-7. Push: `git push origin feature/minha-feature`
-8. Abra um Pull Request
-
-### Padrões de Commit
-
-Use [Conventional Commits](https://www.conventionalcommits.org/):
-- `feat:` nova funcionalidade
-- `fix:` correção de bug
-- `docs:` documentação
-- `test:` testes
-- `refactor:` refatoração
-- `chore:` manutenção
-
-### Code Style
-
-- Seguir convenções Java padrão
-- Usar Javadoc para classes/métodos públicos
-- Manter cobertura de testes (verificar com `mvn jacoco:report`)
-
-## 📚 Áreas que Precisam de Ajuda
-
-- [ ] Frontend: Dashboard React
-- [ ] SDKs: Python, JavaScript clients
-- [ ] Testes: Aumentar cobertura
-- [ ] Documentação: Tutoriais
-- [ ] DevOps: Kubernetes manifests
-
-Veja o [ROADMAP.md](ROADMAP.md) para mais detalhes.
+Output: "Esta consulta busca os 10 clientes que mais gastaram. 
+Ela junta a tabela de clientes com a tabela de pedidos,
+soma o total de pedidos de cada cliente, e retorna os 10 maiores valores."
 ```
-
----
-
-#### 6. Configurar GitHub Issues Templates (15 min) 🎫
-
-Criar `.github/ISSUE_TEMPLATE/`:
-
-**Bug Report:**
-```bash
-mkdir -p .github/ISSUE_TEMPLATE
-cat > .github/ISSUE_TEMPLATE/bug_report.md << 'EOL'
----
-name: Bug Report
-about: Reportar um problema
-title: '[BUG] '
-labels: bug
----
-
-## 🐛 Descrição do Bug
-Descrição clara e concisa do bug.
-
-## 📋 Passos para Reproduzir
-1. 
-2. 
-3. 
-
-## ✅ Comportamento Esperado
-O que deveria acontecer.
-
-## ❌ Comportamento Atual
-O que está acontecendo.
-
-## 🖥️ Ambiente
-- OS: 
-- Java: 
-- Banco de Dados: 
-- Versão aiToSql: 
-
-## 📸 Screenshots
-Se aplicável, adicione screenshots.
-EOL
-```
-
-**Feature Request:**
-```bash
-cat > .github/ISSUE_TEMPLATE/feature_request.md << 'EOL'
----
-name: Feature Request
-about: Sugerir nova funcionalidade
-title: '[FEATURE] '
-labels: enhancement
----
-
-## 🎯 Descrição da Feature
-Descrição clara da funcionalidade desejada.
-
-## 🤔 Por Que É Necessária?
-Explique o problema que ela resolve.
-
-## 💡 Solução Proposta
-Como você imagina que funcione.
-
-## 🔄 Alternativas
-Outras abordagens que você considerou.
-
-## 📚 Contexto Adicional
-Qualquer outra informação relevante.
-EOL
-```
-
----
-
-### 🔜 Próximo Mês (v0.1.0 - Production Ready)
-
-#### 7. Implementar Autenticação JWT (1 semana) 🔒
-
-**Objetivo:** Proteger endpoints com JWT
 
 **Tasks:**
-1. Adicionar Spring Security
-2. Implementar JWT token generation/validation
-3. Criar endpoint de login
-4. Adicionar testes de segurança
-5. Documentar autenticação
-
-**Branch:**
-```bash
-git checkout -b feature/jwt-authentication
-```
-
-**Dependências:**
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-security</artifactId>
-</dependency>
-<dependency>
-    <groupId>io.jsonwebtoken</groupId>
-    <artifactId>jjwt-api</artifactId>
-    <version>0.12.3</version>
-</dependency>
-```
+- [ ] Criar ferramenta `explainQuery`
+- [ ] Prompt engineering para explicações claras
+- [ ] Testes com queries complexas
+- [ ] Documentação
 
 ---
 
-#### 8. Adicionar Rate Limiting (3 dias) 🚦
+#### 5. Nova Ferramenta: `suggestQueryOptimizations` (2 dias)
 
-**Objetivo:** Prevenir abuse
+**Objetivo:** Analisar query e sugerir melhorias.
 
 **Tasks:**
-1. Adicionar Bucket4j
-2. Configurar limites por endpoint
-3. Responder com HTTP 429 quando exceder
-4. Adicionar headers de rate limit
-5. Documentar limites
-
-**Dependências:**
-```xml
-<dependency>
-    <groupId>com.github.vladimir-bukhtoyarov</groupId>
-    <artifactId>bucket4j-core</artifactId>
-    <version>8.7.0</version>
-</dependency>
-```
+- [ ] Integrar com `EXPLAIN` do banco
+- [ ] LLM analisa o plan e sugere:
+  - Índices faltantes
+  - Reescrita de query
+  - Hints de performance
+- [ ] Testes
+- [ ] Documentação
 
 ---
 
-#### 9. Migrar Cache para Redis (3 dias) 🗄️
+### 💰 Semana 4: Cost Dashboard e Analytics
 
-**Objetivo:** Cache distribuído para escalabilidade
+#### 6. Enhanced Cost Tracking (3 dias)
+
+**Objetivo:** Melhorar tracking de custos reais.
 
 **Tasks:**
-1. Adicionar Spring Data Redis
-2. Configurar connection
-3. Migrar @Cacheable para usar Redis
-4. Adicionar testes
-5. Documentar configuração
-
-**Dependências:**
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-redis</artifactId>
-</dependency>
-```
+- [ ] Atualizar `TokenizationMetrics` para usar custos reais (não estimados)
+- [ ] Breakdown por LLM provider
+- [ ] Endpoint `/mcp/analytics/cost?from=X&to=Y&provider=openai`
+- [ ] Comparação de custos entre providers
+- [ ] Alertas de threshold (exemplo: se custo/dia > $10, avisar)
 
 ---
 
-#### 10. Adicionar Metrics (Prometheus) (2 dias) 📊
+#### 7. Simple Web Dashboard (2 dias)
 
-**Objetivo:** Monitoramento detalhado
+**Objetivo:** UI simples para visualizar custos e métricas.
 
 **Tasks:**
-1. Adicionar Micrometer Prometheus
-2. Expor `/actuator/prometheus`
-3. Adicionar métricas customizadas
-4. Criar dashboard Grafana (exemplo)
-5. Documentar setup
+- [ ] Criar `src/main/resources/static/dashboard.html`
+- [ ] Chart.js para gráficos
+- [ ] Endpoint `/mcp/dashboard` serve HTML estático
+- [ ] Gráficos:
+  - Custos ao longo do tempo
+  - Breakdown por ferramenta
+  - Breakdown por LLM provider
+  - Top queries por custo
+  - Cache hit rate
 
-**Dependências:**
-```xml
-<dependency>
-    <groupId>io.micrometer</groupId>
-    <artifactId>micrometer-registry-prometheus</artifactId>
-</dependency>
-```
-
----
-
-## 🎯 Prioridades Sugeridas
-
-### 🔴 URGENTE (Fazer agora)
-1. ✅ Criar Release 0.0.1
-2. ✅ Adicionar badges
-3. ✅ Testar localmente
-
-### 🟡 IMPORTANTE (Esta semana)
-4. ⏳ Adicionar LICENSE
-5. ⏳ Criar CONTRIBUTING.md
-6. ⏳ Configurar issue templates
-
-### 🟢 DESEJÁVEL (Este mês)
-7. ⏳ JWT Authentication
-8. ⏳ Rate Limiting
-9. ⏳ Redis Cache
-10. ⏳ Prometheus Metrics
+**Tech Stack:**
+- HTML + CSS (simples, sem framework)
+- Chart.js (via CDN)
+- Fetch API para buscar dados de `/mcp/metrics` e `/mcp/analytics/cost`
 
 ---
 
-## 📊 Métricas de Progresso
+#### 8. Usage Reporting (2 dias)
 
-### Semana 1
-- [ ] Release 0.0.1 publicada
-- [ ] Badges adicionados
-- [ ] LICENSE criado
-- [ ] CONTRIBUTING.md criado
-- [ ] Issue templates configurados
-
-### Semana 2-3
-- [ ] JWT implementado
-- [ ] Rate limiting funcional
-- [ ] Redis configurado
-
-### Semana 4
-- [ ] Prometheus metrics
-- [ ] Release 0.1.0 criada
-- [ ] Blog post sobre o projeto (opcional)
+**Tasks:**
+- [ ] Endpoint `/mcp/reports/usage?from=X&to=Y`
+- [ ] Export CSV/JSON
+- [ ] Relatórios automáticos (opcional: email/webhook)
+- [ ] Documentação
 
 ---
 
-## 💡 Dicas
+## 📊 Métricas de Sucesso da v0.2.0
 
-### Desenvolvimento Local
+### Critérios de Aceitação:
+- ✅ Integração com no mínimo 2 LLM providers (OpenAI + Ollama)
+- ✅ Ferramenta `naturalLanguageQuery` funcional
+- ✅ Text-to-SQL accuracy > 80% (testar com 20 perguntas padrão)
+- ✅ Custos reais sendo trackados (não estimados)
+- ✅ Dashboard web funcional
+- ✅ Cobertura de testes ≥ 78%
+- ✅ Todos os testes passando
+- ✅ Documentação atualizada
+
+### KPIs:
+| Métrica | v0.1.0 | Meta v0.2.0 |
+|---------|--------|-------------|
+| Cobertura | 74% | 78% |
+| Testes | 31 | ~40 |
+| Ferramentas MCP | 4 | 7 |
+| LLM Providers | 0 | 4 |
+| Tempo médio | <100ms | <150ms* |
+| Accuracy Text-to-SQL | N/A | >80% |
+
+\* *Inclui latência de chamadas LLM*
+
+---
+
+## 🔄 Processo de Desenvolvimento
+
+### Workflow Recomendado:
+
 ```bash
-# Sempre use profile de teste
-mvn spring-boot:run -Dspring-boot.run.profiles=test
+# 1. Criar branch feature
+git checkout -b feature/openai-integration
 
-# Execute testes frequentemente
-mvn test
+# 2. Desenvolvimento TDD
+# - Escrever testes primeiro
+# - Implementar funcionalidade
+# - Refatorar
 
-# Verifique cobertura
-mvn jacoco:report && firefox target/site/jacoco/index.html
-```
-
-### Antes de Commitar
-```bash
-# 1. Formatar código
-# 2. Executar testes
+# 3. Executar testes localmente
 mvn clean test
 
-# 3. Verificar cobertura (se adicionou código)
+# 4. Verificar cobertura
 mvn jacoco:report
+firefox target/site/jacoco/index.html
 
-# 4. Commit com mensagem descritiva
-git commit -m "feat: adicionar funcionalidade X
+# 5. Commit incremental
+git add .
+git commit -m "feat: adicionar OpenAI provider com testes"
 
-- Detalhe 1
-- Detalhe 2
-- Closes #123"
+# 6. Push e PR
+git push origin feature/openai-integration
+# Criar PR no GitHub
+
+# 7. Merge após revisão
+# CI/CD executa testes automaticamente
+
+# 8. Após merge, branch main está atualizada
+git checkout main
+git pull origin main
 ```
 
-### Antes de Release
+---
+
+## 📚 Documentação a Criar/Atualizar
+
+### Novos Documentos:
+- [ ] `docs/OPENAI_SETUP.md` - Setup do OpenAI API
+- [ ] `docs/CLAUDE_SETUP.md` - Setup do Anthropic Claude
+- [ ] `docs/GEMINI_SETUP.md` - Setup do Google Gemini
+- [ ] `docs/OLLAMA_SETUP.md` - Setup do Ollama local
+- [ ] `docs/TEXT_TO_SQL.md` - Como usar Text-to-SQL
+- [ ] `docs/LLM_COMPARISON.md` - Comparação de providers
+- [ ] `docs/COST_OPTIMIZATION.md` - Como reduzir custos
+
+### Atualizar:
+- [ ] `README.md` - Adicionar seção de LLM integration
+- [ ] `QUICKSTART.md` - Adicionar exemplos de Text-to-SQL
+- [ ] `ROADMAP.md` - Marcar v0.2.0 como em progresso
+- [ ] `IMPLEMENTATION_SUMMARY.md` - Adicionar arquitetura de LLMs
+
+---
+
+## 🧪 Testes Importantes
+
+### Testes de Integração LLM:
+```java
+@Test
+void testOpenAI_GenerateSQL_SimpleQuery() {
+    String nl = "Liste os 5 clientes mais recentes";
+    String sql = llmService.generateSQL(nl, schemaContext);
+    
+    assertTrue(sql.toUpperCase().contains("SELECT"));
+    assertTrue(sql.toUpperCase().contains("LIMIT 5"));
+}
+
+@Test
+void testOpenAI_TokenCounting() {
+    String text = "Hello, world!";
+    int tokens = openAIProvider.countTokens(text);
+    
+    assertTrue(tokens > 0);
+    assertTrue(tokens < 10); // ~3-4 tokens esperados
+}
+
+@Test
+void testCostTracking_RealAPI() {
+    String nl = "Mostre todos os produtos";
+    QueryResult result = naturalLanguageQueryService.execute(nl, 100);
+    
+    assertNotNull(result.getTokenizationMetrics());
+    assertTrue(result.getTokenizationMetrics().getCostUSD() > 0);
+}
+```
+
+### Teste E2E Completo:
+```java
+@Test
+void testFullJourney_NaturalLanguageToResults() {
+    // 1. Schema understanding
+    String schema = schemaService.getSchemaInfo().schemaPrompt();
+    
+    // 2. Natural language query
+    String question = "Quais os 10 produtos mais vendidos no último mês?";
+    
+    // 3. Generate SQL via LLM
+    String sql = llmService.generateSQL(question, schema);
+    
+    // 4. Validate SQL
+    assertTrue(sql.toUpperCase().startsWith("SELECT"));
+    
+    // 5. Execute query
+    QueryResult result = queryService.executeQuery(sql, 10);
+    
+    // 6. Verify results
+    assertNotNull(result);
+    assertTrue(result.getRowCount() <= 10);
+    
+    // 7. Verify tokenization
+    assertNotNull(result.getTokenizationMetrics());
+    assertTrue(result.getTokenizationMetrics().getEstimatedTokens() > 0);
+    assertTrue(result.getTokenizationMetrics().getCostUSD() > 0);
+}
+```
+
+---
+
+## ⚠️ Riscos e Mitigações
+
+| Risco | Impacto | Mitigação |
+|-------|---------|-----------|
+| **Custo alto de APIs LLM** | Alto | Cache agressivo, usar Ollama para dev, rate limiting |
+| **Accuracy baixa do Text-to-SQL** | Médio | Prompt engineering, refinamento iterativo, feedback loop |
+| **Latência de APIs LLM** | Médio | Cache, async processing, timeout configurável |
+| **Dependência de APIs externas** | Alto | Fallback para Ollama local, retry logic, circuit breaker |
+| **Complexidade de integração** | Médio | Abstrair em interface, testes mocados primeiro |
+
+---
+
+## 💡 Dicas para Desenvolvimento
+
+### 1. Começar com Mocks
+```java
+// Implementar MockLLMProvider primeiro
+// Permite testar sem gastar dinheiro em APIs
+public class MockLLMProvider implements LLMProvider {
+    @Override
+    public String generateSQL(String nl, String schema) {
+        return "SELECT * FROM customers LIMIT 10"; // Resposta fixa
+    }
+}
+```
+
+### 2. Usar Variáveis de Ambiente
 ```bash
-# 1. Todos os testes passando
-mvn clean test
+# .env (não commitado)
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_API_KEY=AI...
+```
 
-# 2. Atualizar versão no pom.xml
-# 3. Atualizar CHANGELOG (se existir)
-# 4. Criar tag
-git tag -a REL-X.X.X -m "Release X.X.X"
+### 3. Cache Agressivo
+```properties
+# Cache de respostas LLM por 24h
+spring.cache.cache-names=schema-info,llm-responses
+spring.cache.caffeine.spec=maximumSize=100,expireAfterWrite=24h
+```
 
-# 5. Push
-git push origin REL-X.X.X
+### 4. Monitoring de Custos
+```java
+// Alert quando custo diário exceder threshold
+if (dailyCost > MAX_DAILY_COST) {
+    log.error("Daily cost exceeded: ${}", dailyCost);
+    // Enviar email/Slack/etc
+}
 ```
 
 ---
 
-## 🔗 Links Úteis
+## 📅 Checklist Final para Release v0.2.0
 
-- **Repositório**: https://github.com/magacho/aiToSql
+Antes de criar a release:
+
+- [ ] Todos os testes passando (≥ 40 testes)
+- [ ] Cobertura ≥ 78%
+- [ ] Integração com no mínimo 2 LLM providers
+- [ ] Ferramenta `naturalLanguageQuery` funcional
+- [ ] Text-to-SQL accuracy ≥ 80%
+- [ ] Dashboard web funcional
+- [ ] Documentação atualizada
+- [ ] Changelog atualizado
+- [ ] Performance metrics dentro do esperado
+- [ ] Testes E2E passando
+- [ ] Build do Maven sem erros
+- [ ] Criar tag `REL-0.2.0`
+- [ ] Push para GitHub
+- [ ] Verificar workflow CI/CD
+- [ ] Publicar release notes
+
+---
+
+## 🎯 Depois da v0.2.0
+
+Após completar v0.2.0, as próximas prioridades são:
+
+1. **v0.3.0 - Segurança** (Auth, Rate Limiting, Audit)
+2. **v0.4.0 - Performance** (Redis, Async, Multi-tenancy)
+3. **v0.5.0 - Observabilidade** (Prometheus, Grafana)
+4. **v0.6.0 - Developer Experience** (SDKs, CLI, Web UI)
+
+Veja [ROADMAP.md](ROADMAP.md) para detalhes completos.
+
+---
+
+## 📞 Precisa de Ajuda?
+
+- **Roadmap Completo**: [ROADMAP.md](ROADMAP.md)
 - **Issues**: https://github.com/magacho/aiToSql/issues
-- **Actions**: https://github.com/magacho/aiToSql/actions
-- **Roadmap**: [ROADMAP.md](ROADMAP.md)
-- **Status Final**: [STATUS_FINAL.md](STATUS_FINAL.md)
+- **Discussions**: https://github.com/magacho/aiToSql/discussions
+- **Mantenedor**: @magacho
 
 ---
 
-## ❓ Precisa de Ajuda?
+**Boa sorte com o desenvolvimento da v0.2.0! 🚀**
 
-1. Leia a documentação em [README.md](README.md)
-2. Veja exemplos em [QUICKSTART.md](QUICKSTART.md)
-3. Abra uma [issue](https://github.com/magacho/aiToSql/issues)
-4. Entre em contato com @magacho
-
----
-
-**Próxima atualização**: Após Release 0.0.1  
-**Mantenedor**: @magacho  
+**Próxima revisão**: Após merge do primeiro PR de LLM integration  
 **Data**: 28 de Outubro de 2024

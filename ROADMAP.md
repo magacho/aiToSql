@@ -1,459 +1,483 @@
 # 🗺️ Roadmap - aiToSql MCP Server
 
 **Data de Criação**: 28 de Outubro de 2024  
-**Status Atual**: v0.0.1-SNAPSHOT (Pronto para primeira release)
+**Última Atualização**: 28 de Outubro de 2024  
+**Status Atual**: v0.2.0-SNAPSHOT (Em desenvolvimento após release v0.1.0)  
+**Releases Publicadas**: v0.1.0
 
 ---
 
 ## 🎯 Visão Geral
 
-Este roadmap define os próximos passos para evoluir o **aiToSql MCP Server** de um protótipo funcional para uma solução enterprise-grade de integração entre LLMs e bancos de dados.
+Este roadmap define a evolução do **aiToSql MCP Server** de um MVP funcional para uma solução enterprise-grade de integração entre LLMs e bancos de dados relacionais.
 
 ---
 
-## 📋 Fase Atual - v0.0.1 ✅ COMPLETO
+## 📋 Histórico de Releases
 
-### Entregas
+### ✅ v0.1.0 - COMPLETO (28/Out/2024)
+
+**Tema**: MVP + Tokenização + Métricas
+
+**Entregas Principais:**
 - ✅ Protocolo MCP JSON-RPC 2.0 completo
-- ✅ 4 ferramentas básicas (schema, tables, triggers, query)
+- ✅ 4 ferramentas MCP (schema, tables, triggers, query)
 - ✅ Suporte multi-banco (PostgreSQL, MySQL, Oracle, MSSQL)
-- ✅ Testes automatizados (26 testes, 100% passando)
+- ✅ Sistema de tokenização com métricas detalhadas
+- ✅ Estimativa de custos de API (GPT-4 baseline)
+- ✅ Performance metrics por ferramenta
+- ✅ Teste end-to-end completo (jornada completa)
+- ✅ 31 testes automatizados (100% passando)
+- ✅ Cobertura de testes: 74%
 - ✅ CI/CD com GitHub Actions
-- ✅ Documentação completa
+- ✅ Documentação completa (README, QUICKSTART, guides)
 
-### Limitações Conhecidas
+**Métricas Alcançadas:**
+- ⏱️ Tempo médio de resposta: < 100ms
+- 📊 Cobertura de código: 74% (instruction), 72% (branch)
+- 🧪 Taxa de sucesso de testes: 100%
+- 📦 Artefatos: JAR executável + relatório JaCoCo
+
+**Limitações Conhecidas:**
 - ⚠️ Sem autenticação/autorização
 - ⚠️ Sem rate limiting
-- ⚠️ Cache simples (apenas em memória)
-- ⚠️ Métricas básicas
-- ⚠️ Sem suporte a múltiplas conexões simultâneas
+- ⚠️ Cache apenas em memória (não distribuído)
+- ⚠️ Tokenização local (sem integração com APIs LLM reais)
+- ⚠️ Sem suporte a múltiplas conexões de datasource simultâneas
+- ⚠️ Sem geração de SQL via LLM (Text-to-SQL)
 
 ---
 
-## 🚀 Fase 1 - Melhorias de Produção (v0.1.0)
+## 🚀 Fase Atual - v0.2.0: Integração com LLMs Reais
 
-**Objetivo**: Tornar o servidor production-ready
+**Objetivo**: Conectar com APIs de LLMs para Text-to-SQL e análise inteligente  
+**Prioridade**: 🔴 CRÍTICA  
+**Prazo**: 3-4 semanas  
+**Status**: 🔄 EM PROGRESSO  
+**Meta de Cobertura**: 78%
 
-### 1.1 Segurança Avançada 🔒
-**Prioridade**: ALTA
+### 2.1 Integração com APIs de LLMs 🤖
+**Prioridade**: CRÍTICA  
+**Estimativa**: 2 semanas
 
 #### Tarefas:
-- [ ] **Autenticação JWT/OAuth2**
-  - Implementar Spring Security
-  - Suporte a tokens JWT
-  - Integração com OAuth2 providers (Google, GitHub, Azure AD)
+- [ ] **OpenAI GPT-4 Integration** (5 dias)
+  - Implementar client para API OpenAI
+  - Tokenização real usando tiktoken equivalente (Java)
+  - Geração de SQL a partir de linguagem natural
+  - Cache de respostas para reduzir custos
+  - Tracking de custos real (não estimado)
+  - Testes de integração (mock + real)
   
-- [ ] **Rate Limiting**
-  - Limitar requisições por cliente
-  - Proteção contra DDoS
-  - Implementar usando Bucket4j
+- [ ] **Anthropic Claude Integration** (3 dias)
+  - Client para API Claude
+  - Suporte a Claude 3.5 Sonnet
+  - Comparação de performance vs GPT-4
+  - Testes de integração
   
-- [ ] **Audit Logging**
+- [ ] **Google Gemini Integration** (2 dias)
+  - Client para API Gemini
+  - Suporte a Gemini Pro/Ultra
+  - Testes de integração
+  
+- [ ] **Ollama Local LLM** (2 dias)
+  - Integração com Ollama para modelos locais
+  - Suporte a Llama 3, Mistral, CodeLlama
+  - Sem custos de API
+  - Testes locais
+
+#### Deliverables:
+- ✅ Interface abstrata `LLMProvider`
+- ✅ 4 implementações concretas (OpenAI, Claude, Gemini, Ollama)
+- ✅ Service layer: `LLMService` com seleção de provider
+- ✅ Configuração via properties (provider, api-key, model)
+- ✅ Testes unitários + integração (mock)
+- ✅ Documentação de setup para cada provider
+
+**Impacto na Cobertura**: +2% (novos testes de integração LLM)
+
+---
+
+### 2.2 Text-to-SQL Intelligence 🧠
+**Prioridade**: ALTA  
+**Estimativa**: 1.5 semanas
+
+#### Tarefas:
+- [ ] **Nova Ferramenta MCP: `naturalLanguageQuery`** (4 dias)
+  - Parser de intenção de usuário (extrair entidades, ação)
+  - Geração de SQL usando LLM + contexto de schema
+  - Prompt engineering otimizado para SQL generation
+  - Validação e sanitização de SQL gerado
+  - Refinamento iterativo (se SQL inválido, retry com erro)
+  - Testes com diversos tipos de perguntas
+  
+- [ ] **Nova Ferramenta MCP: `explainQuery`** (2 dias)
+  - Recebe SQL, retorna explicação em linguagem natural
+  - Usa LLM para gerar explicação clara
+  - Útil para documentação automática
+  - Testes com queries complexas
+  
+- [ ] **Query Optimization Suggestions** (2 dias)
+  - Nova ferramenta: `suggestQueryOptimizations`
+  - LLM analisa EXPLAIN plan do banco
+  - Sugestões de índices, reescrita, hints
+  - Testes com queries lentas
+
+#### Deliverables:
+- ✅ 3 novas ferramentas MCP
+- ✅ Prompt templates versionados (v1.0)
+- ✅ Endpoint `/mcp/tools/call` atualizado
+- ✅ Testes E2E de Text-to-SQL
+- ✅ Documentação de prompts e accuracy
+- ✅ Comparação de accuracy entre LLMs (OpenAI vs Claude vs Gemini)
+
+**Impacto na Cobertura**: +2% (novos testes de NL-to-SQL)
+
+---
+
+### 2.3 Cost Tracking Dashboard 💰
+**Prioridade**: MÉDIA  
+**Estimativa**: 1 semana
+
+#### Tarefas:
+- [ ] **Enhanced Cost Analytics** (3 dias)
+  - Endpoint `/mcp/analytics/cost`
+  - Breakdown por ferramenta, LLM provider, período (dia/semana/mês)
+  - Comparação de custos: OpenAI vs Claude vs Gemini
+  - Alertas de threshold de custo (configurável)
+  - Export CSV/JSON
+  
+- [ ] **Simple Web Dashboard** (2 dias)
+  - HTML + Chart.js simples (sem framework pesado)
+  - Endpoint `/mcp/dashboard` serve página estática
+  - Gráficos de custos ao longo do tempo
+  - Top queries por custo
+  - Cache hit rate visualization
+  
+- [ ] **Usage Reporting** (2 dias)
+  - Relatórios automáticos (JSON)
+  - Endpoint `/mcp/reports/usage?from=X&to=Y`
+  - Integração com billing systems (webhook opcional)
+
+#### Deliverables:
+- ✅ Enhanced metrics endpoints
+- ✅ Simple web dashboard (HTML + Chart.js)
+- ✅ Automated reporting
+- ✅ Testes de analytics
+- ✅ Documentação de uso
+
+**Impacto na Cobertura**: +0% (analytics não crítico para cobertura)
+
+---
+
+## 🔒 Próxima Fase - v0.3.0: Segurança e Produção
+
+**Objetivo**: Tornar o servidor production-ready com auth, rate limiting e compliance  
+**Prioridade**: 🟡 ALTA  
+**Prazo**: 2-3 semanas  
+**Status**: ⏳ PLANEJADO  
+**Meta de Cobertura**: 82%
+
+### 3.1 Autenticação e Autorização 🔐
+**Prioridade**: CRÍTICA  
+**Estimativa**: 1 semana
+
+#### Tarefas:
+- [ ] **API Key Authentication** (3 dias)
+  - Implementação mais simples que JWT
+  - Header: `X-API-Key`
+  - Gestão de keys via endpoints admin
+  - Validação em filter/interceptor
+  - Testes de segurança (401, 403)
+  
+- [ ] **JWT Authentication** (opcional, 2 dias)
+  - Spring Security configuration
+  - JWT token generation/validation
+  - Endpoint `/auth/login` e `/auth/refresh`
+  - User/password storage (in-memory inicial)
+  
+- [ ] **Role-Based Access Control (RBAC)** (2 dias)
+  - Roles: ADMIN, USER, READONLY
+  - Permissões por ferramenta MCP
+  - Audit log de acessos negados
+  - Testes de RBAC
+
+#### Deliverables:
+- ✅ Autenticação funcional (API Key como padrão)
+- ✅ Documentação de setup de auth
+- ✅ Testes de segurança
+- ✅ Migration guide (sem auth → com auth)
+
+**Impacto na Cobertura**: +2%
+
+---
+
+### 3.2 Rate Limiting e Throttling 🚦
+**Prioridade**: ALTA  
+**Estimativa**: 4 dias
+
+#### Tarefas:
+- [ ] **Request Rate Limiting** (2 dias)
+  - Bucket4j implementation
+  - Limites configuráveis por endpoint
+  - Headers: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
+  - Response HTTP 429 quando exceder
+  - Testes de rate limiting
+  
+- [ ] **Cost-Based Throttling** (2 dias)
+  - Rate limit baseado em custo de LLM (não só requests)
+  - Exemplo: máx $10/dia por usuário/API key
+  - Diferentes limits por tier (free: $1/day, pro: $100/day)
+  - Testes de cost throttling
+  
+- [ ] **Query Timeout** (já existe parcialmente)
+  - Timeout configurável para queries longas
+  - Cancelamento automático após X segundos
+  - Métricas de queries timeouts
+
+#### Deliverables:
+- ✅ Rate limiting funcional
+- ✅ Cost-based throttling
+- ✅ Configuração via properties
+- ✅ Testes de throttling
+- ✅ Documentação
+
+**Impacto na Cobertura**: +2%
+
+---
+
+### 3.3 Audit Logging e Compliance 📝
+**Prioridade**: MÉDIA  
+**Estimativa**: 1 semana
+
+#### Tarefas:
+- [ ] **Comprehensive Audit Logs** (3 dias)
   - Registrar todas as queries executadas
-  - Log de acessos e tentativas de violação
-  - Integração com ELK Stack (opcional)
+  - Timestamp, user/API key, query, resultado (success/fail)
+  - Tentativas de SQL injection
+  - Acessos negados (401, 403)
+  - Custos de LLM por requisição
+  - Log separado (audit.log)
   
-- [ ] **Query Timeout**
-  - Timeout configurável para queries
-  - Cancelamento automático de queries longas
-  - Métricas de tempo de execução
+- [ ] **Log Export e Análise** (2 dias)
+  - Export para CSV/JSON
+  - Endpoint `/admin/audit?from=X&to=Y`
+  - Filtros: user, tool, status
+  
+- [ ] **LGPD/GDPR Compliance Basics** (2 dias)
+  - Data masking para dados sensíveis (opcional)
+  - Anonimização de logs
+  - Endpoint `/admin/user/{id}/purge` (direito ao esquecimento)
 
-**Estimativa**: 2-3 semanas  
-**Cobertura Esperada**: +5% (novos testes de segurança)
+#### Deliverables:
+- ✅ Sistema de audit logging
+- ✅ Endpoints de export
+- ✅ Documentação de compliance
+- ✅ Testes de logging
+
+**Impacto na Cobertura**: +0% (logging não aumenta cobertura significativamente)
 
 ---
 
-### 1.2 Performance & Escalabilidade 🚄
-**Prioridade**: ALTA
+## ⚡ Futuro - v0.4.0: Performance e Escalabilidade
 
-#### Tarefas:
-- [ ] **Cache Distribuído**
-  - Migrar de cache local para Redis
-  - Cache de resultados de queries
-  - Invalidação inteligente de cache
-  
-- [ ] **Connection Pooling Avançado**
-  - Configuração otimizada do HikariCP
-  - Pool por banco de dados
-  - Monitoramento de conexões
-  
-- [ ] **Async Processing**
-  - Queries assíncronas para operações longas
-  - WebSocket para streaming de resultados
-  - Queue para processamento em background
+**Objetivo**: Otimizar para alta carga e múltiplos tenants  
+**Prioridade**: 🟢 MÉDIA  
+**Prazo**: 2-3 semanas  
+**Status**: 🔮 FUTURO  
+**Meta de Cobertura**: 86%
 
-- [ ] **Paginação Inteligente**
-  - Suporte a cursors para resultados grandes
-  - Lazy loading de dados
-  - Otimização de memória
+### Resumo de Features:
 
-**Estimativa**: 2-3 semanas  
-**Cobertura Esperada**: +3% (testes de performance)
+#### 4.1 Cache Distribuído (Redis)
+- Migrar de Caffeine para Redis
+- Cache de schema, query results, respostas LLM
+- Smart invalidation
+- Multi-layer caching (L1: local, L2: Redis)
 
----
+#### 4.2 Async Processing
+- Queries longas em background
+- WebSocket streaming de resultados
+- Message queue (RabbitMQ/Kafka)
 
-### 1.3 Observabilidade 📊
-**Prioridade**: MÉDIA
+#### 4.3 Multi-Tenancy
+- Isolamento por tenant
+- Dynamic datasource management
+- Tenant-specific settings (LLM provider, budget, rate limits)
 
-#### Tarefas:
-- [ ] **Métricas Avançadas**
-  - Integração com Prometheus
-  - Dashboards Grafana
-  - Métricas personalizadas (queries/min, latência, etc)
-  
-- [ ] **Health Checks**
-  - Endpoint `/actuator/health` detalhado
-  - Verificação de conectividade com bancos
-  - Status de dependências externas
-  
-- [ ] **Distributed Tracing**
-  - Integração com Zipkin/Jaeger
-  - Rastreamento end-to-end de requisições
-  - Correlação de logs
-
-- [ ] **Alertas**
-  - Alertas via Slack/Email
-  - Monitoramento de SLA
-  - Detecção de anomalias
-
-**Estimativa**: 1-2 semanas  
-**Cobertura Esperada**: +2% (testes de monitoramento)
+**Estimativa Total**: 2-3 semanas  
+**Impacto na Cobertura**: +4%
 
 ---
 
-## 🌟 Fase 2 - Funcionalidades Avançadas (v0.2.0)
+## 📊 Futuro - v0.5.0: Observabilidade Avançada
 
-**Objetivo**: Adicionar capacidades enterprise
+**Objetivo**: Monitoring, metrics e alertas production-grade  
+**Prioridade**: 🟢 MÉDIA  
+**Prazo**: 1-2 semanas  
+**Status**: 🔮 FUTURO  
+**Meta de Cobertura**: 88%
 
-### 2.1 Multi-Tenancy 🏢
-**Prioridade**: ALTA
+### Resumo de Features:
 
-#### Tarefas:
-- [ ] **Isolamento por Tenant**
-  - Suporte a múltiplos clientes isolados
-  - Configuração por tenant (datasources, limites)
-  - Schema separation
-  
-- [ ] **Gestão de Configurações**
-  - API para adicionar/remover datasources
-  - Hot reload de configurações
-  - Validação de permissões por tenant
+#### 5.1 Prometheus & Grafana
+- Endpoint `/actuator/prometheus`
+- Dashboards Grafana (overview, custos, performance, segurança)
+- Custom metrics (queries/min, custo/hora, cache hit rate)
 
-**Estimativa**: 2 semanas  
-**Cobertura Esperada**: +4%
+#### 5.2 Distributed Tracing
+- Zipkin/Jaeger integration
+- OpenTelemetry support
+- End-to-end trace de requisições
 
----
+#### 5.3 Alertas e SLOs
+- Alertas via Slack/Email/PagerDuty
+- SLO definition (uptime, latência, error rate)
+- Anomaly detection básica
 
-### 2.2 Query Intelligence 🧠
-**Prioridade**: MÉDIA
-
-#### Tarefas:
-- [ ] **Query Optimization**
-  - Análise de EXPLAIN plans
-  - Sugestões de índices
-  - Detecção de queries N+1
-  
-- [ ] **Query Caching Inteligente**
-  - Cache baseado em padrões de uso
-  - TTL adaptativo
-  - Invalidação baseada em mudanças de dados
-  
-- [ ] **Query Rewriting**
-  - Otimização automática de queries
-  - Conversão de dialetos SQL
-  - Injeção de hints de performance
-
-**Estimativa**: 3 semanas  
-**Cobertura Esperada**: +5%
+**Estimativa Total**: 1-2 semanas  
+**Impacto na Cobertura**: +2%
 
 ---
 
-### 2.3 Ferramentas MCP Adicionais 🛠️
-**Prioridade**: MÉDIA
+## 🎨 Futuro - v0.6.0: Developer Experience
 
-#### Novas Ferramentas:
-- [ ] **`getIndexRecommendations`**
-  - Análise de queries executadas
-  - Sugestão de índices para otimização
-  
-- [ ] **`explainQuery`**
-  - Retornar EXPLAIN plan de uma query
-  - Análise de performance
-  
-- [ ] **`getStatistics`**
-  - Estatísticas de tabelas (row count, size)
-  - Distribuição de dados
-  
-- [ ] **`getRelationships`**
-  - Mapa completo de relacionamentos (ERD)
-  - Detecção de FK não declaradas
-  
-- [ ] **`executeStoredProcedure`**
-  - Execução segura de stored procedures
-  - Validação de parâmetros
+**Objetivo**: Facilitar integração com SDKs, CLI e Web UI  
+**Prioridade**: 🔵 BAIXA  
+**Prazo**: 3-4 semanas  
+**Status**: 🔮 FUTURO  
+**Meta de Cobertura**: 90%
 
-**Estimativa**: 2 semanas  
-**Cobertura Esperada**: +6%
+### Resumo de Features:
 
----
+#### 6.1 SDKs e Clients
+- Python SDK (PyPI)
+- TypeScript/JavaScript SDK (NPM)
+- Go Client
+- CLI Tool (brew, apt, chocolatey)
 
-## 🎨 Fase 3 - Experiência do Desenvolvedor (v0.3.0)
+#### 6.2 Web Dashboard
+- Schema Explorer UI (React + TypeScript)
+- SQL Query Builder
+- Natural Language chat interface
+- Monitoring dashboard
 
-**Objetivo**: Facilitar integração e uso
+#### 6.3 Documentação Interativa
+- OpenAPI/Swagger UI
+- Interactive tutorials
+- Code examples library
 
-### 3.1 SDKs & Clients 📦
-**Prioridade**: ALTA
-
-#### Tarefas:
-- [ ] **Python Client**
-  ```python
-  from aitosql import McpClient
-  client = McpClient("http://localhost:8080")
-  schema = client.get_schema()
-  ```
-  
-- [ ] **JavaScript/TypeScript Client**
-  ```typescript
-  import { McpClient } from 'aitosql-client';
-  const client = new McpClient('http://localhost:8080');
-  ```
-  
-- [ ] **Go Client**
-- [ ] **CLI Tool**
-  ```bash
-  aitosql query "SELECT * FROM users"
-  aitosql schema --database mydb
-  ```
-
-**Estimativa**: 3 semanas
+**Estimativa Total**: 3-4 semanas  
+**Impacto na Cobertura**: +2%
 
 ---
 
-### 3.2 UI/Dashboard ��
-**Prioridade**: MÉDIA
+## 🎯 Timeline Visual
 
-#### Tarefas:
-- [ ] **Web Dashboard**
-  - Interface visual para explorar schema
-  - Editor de queries com autocomplete
-  - Visualização de resultados
-  
-- [ ] **Query Builder**
-  - Interface drag-and-drop para criar queries
-  - Geração automática de SQL
-  
-- [ ] **Monitoring Dashboard**
-  - Métricas em tempo real
-  - Histórico de queries
-  - Performance insights
+```
+2024 Q4 (Atual)
+│
+├─ Oct 28 ✅ v0.1.0: MVP + Tokenização + Métricas
+│
+├─ Nov 2024 🔄 v0.2.0: Integração LLMs Reais (OpenAI, Claude, Gemini, Ollama)
+│   ├─ Week 1: OpenAI GPT-4 integration
+│   ├─ Week 2: Claude, Gemini, Ollama
+│   ├─ Week 3: Text-to-SQL (naturalLanguageQuery, explainQuery)
+│   └─ Week 4: Cost dashboard
 
-**Estimativa**: 4 semanas  
-**Stack Sugerida**: React + TypeScript + Tailwind
-
----
-
-### 3.3 Documentação Interativa 📚
-**Prioridade**: MÉDIA
-
-#### Tarefas:
-- [ ] **OpenAPI/Swagger**
-  - Documentação automática da API
-  - Try-it-out interativo
-  
-- [ ] **Exemplos por Linguagem**
-  - Code snippets em Python, JS, Java, Go
-  - Casos de uso reais
-  
-- [ ] **Tutoriais Interativos**
-  - Jupyter notebooks com exemplos
-  - Vídeos demonstrativos
-
-**Estimativa**: 1-2 semanas
-
----
-
-## 🌍 Fase 4 - Cloud Native (v0.4.0)
-
-**Objetivo**: Deploy em cloud com máxima escalabilidade
-
-### 4.1 Containerização & Orquestração 🐳
-**Prioridade**: ALTA
-
-#### Tarefas:
-- [ ] **Docker Otimizado**
-  - Multi-stage build
-  - Imagem mínima (distroless)
-  - Health checks integrados
-  
-- [ ] **Kubernetes Manifests**
-  - Deployment, Service, Ingress
-  - HorizontalPodAutoscaler
-  - ConfigMaps e Secrets
-  
-- [ ] **Helm Chart**
-  - Chart parametrizado
-  - Publicação no Artifact Hub
-  
-- [ ] **Operators**
-  - Kubernetes Operator para gestão automatizada
-  - Custom Resource Definitions (CRDs)
-
-**Estimativa**: 2 semanas
-
----
-
-### 4.2 Cloud Provider Integrations ☁️
-**Prioridade**: MÉDIA
-
-#### Tarefas:
-- [ ] **Google Cloud**
-  - Cloud Run deployment
-  - Cloud SQL integration
-  - Secret Manager
-  
-- [ ] **AWS**
-  - ECS/EKS deployment
-  - RDS integration
-  - Secrets Manager
-  
-- [ ] **Azure**
-  - App Service deployment
-  - Azure SQL integration
-  - Key Vault
-
-**Estimativa**: 2 semanas
-
----
-
-### 4.3 Serverless & Edge 🌐
-**Prioridade**: BAIXA
-
-#### Tarefas:
-- [ ] **Serverless Functions**
-  - Lambda/Cloud Functions adapter
-  - Cold start optimization
-  
-- [ ] **Edge Computing**
-  - Cloudflare Workers integration
-  - Edge caching strategies
-
-**Estimativa**: 2 semanas
-
----
-
-## 🔬 Fase 5 - AI/ML Avançado (v0.5.0)
-
-**Objetivo**: Capacidades inteligentes nativas
-
-### 5.1 Natural Language to SQL 🗣️
-**Prioridade**: ALTA
-
-#### Tarefas:
-- [ ] **Integração com LLMs**
-  - OpenAI GPT-4
-  - Anthropic Claude
-  - Google Gemini
-  - Ollama (local)
-  
-- [ ] **Query Generation Inteligente**
-  - Conversão de linguagem natural para SQL
-  - Context-aware (entende schema)
-  - Iteração/refinamento de queries
-  
-- [ ] **Query Explanation**
-  - Explicar queries em linguagem natural
-  - Documentação automática
-
-**Estimativa**: 3 semanas
-
----
-
-### 5.2 Auto-tuning & Learning 📈
-**Prioridade**: MÉDIA
-
-#### Tarefas:
-- [ ] **Performance Learning**
-  - ML para detectar padrões de uso
-  - Sugestões automáticas de otimização
-  
-- [ ] **Anomaly Detection**
-  - Detecção de queries anormais
-  - Alertas proativos
-  
-- [ ] **Capacity Planning**
-  - Previsão de crescimento
-  - Recomendações de scaling
-
-**Estimativa**: 3 semanas
+2024 Q4/2025 Q1
+│
+├─ Dec 2024 ⏳ v0.3.0: Segurança (Auth, Rate Limiting, Audit)
+│   ├─ Week 1: API Key auth + RBAC
+│   ├─ Week 2: Rate limiting + Cost throttling
+│   └─ Week 3: Audit logging + Compliance
+│
+├─ Jan 2025 🔮 v0.4.0: Performance (Redis, Async, Multi-tenancy)
+│   ├─ Week 1: Redis cache
+│   ├─ Week 2: Async processing
+│   └─ Week 3-4: Multi-tenancy
+│
+├─ Feb 2025 🔮 v0.5.0: Observabilidade (Prometheus, Grafana, Alertas)
+│   └─ 1-2 weeks
+│
+└─ Mar 2025 🔮 v0.6.0: Developer Experience (SDKs, CLI, Web UI)
+    └─ 3-4 weeks
+```
 
 ---
 
 ## 📊 Métricas de Sucesso
 
-### v0.1.0 (Produção)
-- ✅ Uptime > 99.9%
-- ✅ Latência p95 < 100ms
-- ✅ Cobertura de testes > 85%
-- ✅ Zero vulnerabilidades críticas
+### v0.1.0 ✅ ALCANÇADO
+- ✅ Cobertura de testes: 74%
+- ✅ 31 testes (100% passando)
+- ✅ Tempo médio < 100ms
+- ✅ Tokenização implementada
+- ✅ Teste E2E completo
 
-### v0.2.0 (Enterprise)
-- ✅ Suporte a 10+ tenants
-- ✅ 1000+ queries/min
-- ✅ Cobertura > 90%
+### v0.2.0 🎯 METAS
+- 🎯 Cobertura: 78%
+- 🎯 Integração com 4 LLM providers
+- 🎯 Text-to-SQL accuracy > 80%
+- 🎯 Tempo médio < 150ms (inclui chamadas LLM)
+- 🎯 Cost tracking real implementado
 
-### v0.3.0 (Developer Experience)
-- ✅ 3+ SDKs oficiais
-- ✅ 100+ stars no GitHub
-- ✅ 10+ contributors
+### v0.3.0 🎯 METAS
+- 🎯 Cobertura: 82%
+- 🎯 Autenticação funcional
+- 🎯 Rate limiting: 100 req/min/user
+- 🎯 Audit log completo
+- 🎯 Zero vulnerabilidades críticas
 
-### v0.4.0 (Cloud Native)
-- ✅ Deploy em 3 clouds
-- ✅ Auto-scaling funcional
-- ✅ 99.99% uptime
+### v0.4.0 🎯 METAS
+- 🎯 Cobertura: 86%
+- 🎯 Cache hit rate > 60%
+- 🎯 Suporte a 10+ tenants
+- 🎯 Async queries funcionais
 
-### v0.5.0 (AI/ML)
-- ✅ 90% acurácia em NL to SQL
-- ✅ 50% redução em queries problemáticas
+### v0.5.0 🎯 METAS
+- 🎯 Cobertura: 88%
+- 🎯 Uptime > 99.9%
+- 🎯 Latência p95 < 200ms
+- 🎯 Prometheus + Grafana dashboards
+
+### v0.6.0 🎯 METAS
+- 🎯 Cobertura: 90%
+- 🎯 3+ SDKs publicados
+- 🎯 CLI tool funcional
+- 🎯 Web UI completa
 
 ---
 
-## 🎯 Priorização Sugerida (Próximos 6 meses)
+## 💡 Backlog de Ideias (Sem Prazo)
 
-### Mês 1-2: **Segurança & Performance (v0.1.0)**
-🔴 **CRÍTICO** para produção
-- Autenticação
-- Rate limiting
-- Cache Redis
-- Monitoramento básico
+Funcionalidades interessantes para o futuro distante:
 
-### Mês 3-4: **Funcionalidades Enterprise (v0.2.0)**
-🟡 **IMPORTANTE** para clientes corporativos
-- Multi-tenancy
-- Query intelligence
-- Ferramentas MCP adicionais
-
-### Mês 5-6: **Developer Experience (v0.3.0)**
-🟢 **DESEJÁVEL** para adoção
-- SDKs (Python, JS)
-- CLI Tool
-- Documentação interativa
-
-### Mês 7+: **Cloud & AI (v0.4.0+)**
-🔵 **FUTURO**
-- Kubernetes
-- NL to SQL
-- Auto-tuning
+- [ ] GraphQL API (além de JSON-RPC)
+- [ ] Data Masking/Anonymization avançado
+- [ ] Query Cost Estimation (antes de executar)
+- [ ] Integration Testing Framework
+- [ ] Marketplace de Tools MCP customizadas
+- [ ] Real-time collaboration (múltiplos usuários)
+- [ ] Plugin system para extensibilidade
+- [ ] Mobile app para monitoramento
+- [ ] VS Code extension
+- [ ] Jupyter kernel para data science
+- [ ] Suporte a bancos NoSQL (MongoDB, Cassandra)
+- [ ] Suporte a Data Lakes (S3, BigQuery)
+- [ ] Query suggestion baseado em histórico
 
 ---
 
 ## 🤝 Como Contribuir
 
 ### Áreas que Precisam de Ajuda:
-1. **Frontend**: Dashboard React
-2. **SDKs**: Python, JavaScript, Go clients
-3. **Testes**: Aumentar cobertura para 90%+
-4. **Documentação**: Tutoriais e exemplos
-5. **DevOps**: Kubernetes manifests, Helm charts
+1. **LLM Integration**: Testar accuracy de diferentes modelos
+2. **Frontend**: Dashboard React/Vue
+3. **SDKs**: Python, JavaScript, Go clients
+4. **Testes**: Aumentar cobertura para 90%+
+5. **Documentação**: Tutoriais e exemplos
+6. **DevOps**: Kubernetes manifests, Helm charts
 
 ### Para Começar:
 ```bash
@@ -467,67 +491,33 @@ git checkout -b feature/minha-feature
 # 4. Fazer mudanças e testar
 mvn clean test
 
-# 5. Commit e push
+# 5. Verificar cobertura
+mvn jacoco:report
+
+# 6. Commit e push
 git commit -m "feat: adicionar nova feature"
 git push origin feature/minha-feature
 
-# 6. Abrir Pull Request
+# 7. Abrir Pull Request
 ```
 
 ---
 
-## 📅 Timeline Visual
+## 📞 Feedback e Discussões
 
-```
-2024 Q4 (Atual)
-│
-├─ Oct ✅ v0.0.1: MVP completo
-│
-├─ Nov 🔜 v0.1.0: Segurança & Performance
-│   ├─ Week 1-2: Autenticação JWT
-│   ├─ Week 3-4: Rate limiting + Redis cache
-│
-├─ Dec 🔜 v0.2.0: Enterprise features
-│   ├─ Week 1-2: Multi-tenancy
-│   └─ Week 3-4: Query intelligence
-
-2025 Q1
-│
-├─ Jan 🔮 v0.3.0: Developer Experience
-│   ├─ Week 1-2: Python/JS SDKs
-│   └─ Week 3-4: CLI Tool + Dashboard
-│
-├─ Feb 🔮 v0.4.0: Cloud Native
-│   └─ Kubernetes + Multi-cloud
-│
-└─ Mar 🔮 v0.5.0: AI/ML
-    └─ NL to SQL + Auto-tuning
-```
+**Issues**: https://github.com/magacho/aiToSql/issues  
+**Discussions**: https://github.com/magacho/aiToSql/discussions  
+**Mantenedor**: @magacho
 
 ---
 
-## 💡 Ideias Futuras (Backlog)
+## 🔄 Processo de Revisão do Roadmap
 
-- [ ] GraphQL API (além de JSON-RPC)
-- [ ] Data Masking/Anonymization para LGPD/GDPR
-- [ ] Query Cost Estimation
-- [ ] Integration Testing Framework
-- [ ] Marketplace de Tools MCP customizadas
-- [ ] Real-time collaboration (múltiplos usuários)
-- [ ] Plugin system para extensibilidade
-- [ ] Mobile app para monitoramento
-- [ ] VS Code extension
-- [ ] Jupyter kernel para data science
-
----
-
-## 📞 Feedback
-
-Tem sugestões para o roadmap? Abra uma issue:
-https://github.com/magacho/aiToSql/issues/new
-
----
+Este roadmap é revisado:
+- ✅ **Após cada release** (ajustar prioridades)
+- ✅ **Mensalmente** (adicionar/remover features)
+- ✅ **Com feedback da comunidade** (issues, discussions)
 
 **Última atualização**: 28 de Outubro de 2024  
-**Próxima revisão**: Após v0.1.0 release  
-**Mantenedor**: @magacho
+**Próxima revisão**: Após release v0.2.0  
+**Versão do documento**: 2.0
