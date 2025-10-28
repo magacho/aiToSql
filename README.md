@@ -12,6 +12,8 @@
 - **Secure Querying**: SQL injection prevention with READ-ONLY enforcement
 - **Trigger Discovery**: Database trigger introspection
 - **Caching**: Performance optimization for metadata operations
+- **Performance Metrics**: Detailed tokenization and performance tracking
+- **Cost Estimation**: Automatic LLM API cost calculation
 
 ## Technologies
 
@@ -264,6 +266,57 @@ firefox target/site/jacoco/index.html
 - ✅ **No blocking** on coverage percentage
 
 **Philosophy**: Track, don't block. Continuous improvement. 📈
+
+## 📈 Performance & Metrics
+
+The MCP Server includes comprehensive performance tracking and tokenization metrics:
+
+### Metrics Endpoints
+
+```bash
+# Get all metrics
+curl http://localhost:8080/mcp/metrics
+
+# Reset metrics
+curl -X POST http://localhost:8080/mcp/metrics/reset
+```
+
+### What is Measured
+
+- **Execution Time**: How long each tool takes to process
+- **Token Estimation**: Approximate token count (1 token ≈ 4 chars)
+- **Cost Estimation**: Estimated LLM API costs (GPT-4 pricing)
+- **Cache Performance**: Cache hit rate for each tool
+- **Response Size**: Characters and estimated tokens per response
+
+### Documentation
+
+- **Performance Metrics**: [PERFORMANCE_METRICS.md](PERFORMANCE_METRICS.md)
+- **Tokenization Guide**: [TOKENIZATION_GUIDE.md](TOKENIZATION_GUIDE.md)
+- **Tokenization Architecture**: [TOKENIZATION_ARCHITECTURE.md](TOKENIZATION_ARCHITECTURE.md)
+
+### Example Metrics Response
+
+```json
+{
+  "tools": {
+    "getSchemaStructure": {
+      "totalCalls": 150,
+      "avgExecutionTimeMs": 45,
+      "avgTokens": 3125,
+      "totalCostUSD": 0.001875,
+      "cacheHitRate": 80.0
+    }
+  },
+  "summary": {
+    "totalCalls": 1880,
+    "totalCostUSD": 0.3483,
+    "averageCostPerCall": 0.00019
+  }
+}
+```
+
+**Note**: Actual tokenization happens in the LLM Host (Claude, GPT-4, etc.), not in the MCP Server. The server provides *estimates* for analysis and optimization.
 
 ## License
 

@@ -2,9 +2,11 @@ package com.magacho.aiToSql.controller;
 
 import com.magacho.aiToSql.config.McpServerConfig;
 import com.magacho.aiToSql.dto.ResponseMetadata;
+import com.magacho.aiToSql.dto.TokenizationMetrics;
 import com.magacho.aiToSql.jsonrpc.JsonRpcError;
 import com.magacho.aiToSql.jsonrpc.JsonRpcRequest;
 import com.magacho.aiToSql.jsonrpc.JsonRpcResponse;
+import com.magacho.aiToSql.service.TokenizationMetricsService;
 import com.magacho.aiToSql.tools.McpToolsRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +29,13 @@ public class McpController {
 
     private final McpToolsRegistry toolsRegistry;
     private final McpServerConfig config;
+    private final TokenizationMetricsService metricsService;
 
-    public McpController(McpToolsRegistry toolsRegistry, McpServerConfig config) {
+    public McpController(McpToolsRegistry toolsRegistry, McpServerConfig config, 
+                         TokenizationMetricsService metricsService) {
         this.toolsRegistry = toolsRegistry;
         this.config = config;
+        this.metricsService = metricsService;
     }
 
     /**
@@ -162,8 +167,12 @@ public class McpController {
         
         String textResult = convertResultToText(result);
         
-        log.info("Tool '{}' executed in {}ms, estimated tokens: {}", 
-                toolName, executionTime, metadata.tokens().estimated());
+        // Record tokenization metrics
+        TokenizationMetrics tokenMetrics = TokenizationMetrics.fromContent(
+                textResult, executionTime, false);
+        metricsService.recordMetrics(toolName, tokenMetrics);
+        
+        log.info("Tool '{}' executed: {}", toolName, tokenMetrics);
 
         return Map.of(
                 "content", java.util.List.of(Map.of(
@@ -207,5 +216,35 @@ public class McpController {
                 "endpoint", "/mcp",
                 "status", "running"
         ));
+    }
+    
+    /**
+     * Get tokenization metrics for all tools
+     */
+    @GetMapping(path = "/metrics", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> getMetrics() {
+        var stats = metricsService.getAllStatistics();
+        
+        // Calculate totals
+        long totalCalls = stats.values().stream().mapToLong(s -> s.totalCalls()).sum();
+        double totalCost = stats.values().stream().mapToDouble(s -> s.totalCostUSD()).sum();
+        
+        return ResponseEntity.ok(Map.of(
+                "tools", stats,
+                "summary", Map.of(
+                        "totalCalls", totalCalls,
+                        "totalCostUSD", totalCost,
+                        "averageCostPerCall", totalCalls > 0 ? totalCost / totalCalls : 0
+                )
+        ));
+    }
+    
+    /**
+     * Reset all metrics
+     */
+    @PostMapping(path = "/metrics/reset", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, String>> resetMetrics() {
+        metricsService.resetMetrics();
+        return ResponseEntity.ok(Map.of("status", "Metrics reset successfully"));
     }
 }
