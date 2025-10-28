@@ -39,7 +39,7 @@ jobs:
         echo "✅ Testes: $TESTS"
         
     - name: 📤 Upload relatório de cobertura
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: jacoco-report-${{ github.sha }}
         path: target/site/jacoco/
