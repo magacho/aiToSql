@@ -13,7 +13,7 @@
 
     <groupId>com.magacho</groupId>
     <artifactId>aiToSql</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0</version>
     <name>aiToSql</name>
     <description>MCP Server - Model Context Protocol for Database Introspection and Query</description>
 
