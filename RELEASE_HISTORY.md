@@ -16,73 +16,129 @@ Este documento mantém o histórico de todas as releases do projeto, incluindo m
 
 ---
 
-## 📋 Versão 0.0.1-SNAPSHOT (Em Desenvolvimento)
+## 📋 Versão 0.1.0 ✨ (Initial Release)
 
-**Data**: 28 de Outubro de 2024  
-**Status**: 🚧 Desenvolvimento Ativo
+**Data**: 28 de Outubro de 2025  
+**Status**: 🚀 Produção
 
 ### 📊 Cobertura de Testes
 
-| Componente | Linhas | Branches | Métodos | Classes | Status |
-|------------|--------|----------|---------|---------|--------|
-| **SecureQueryService** | 95% | 92% | 100% | 100% | ✅ |
-| **McpController** | 90% | 85% | 95% | 100% | ✅ |
-| **McpToolsRegistry** | 85% | 80% | 90% | 100% | 🟢 |
-| **SchemaIntrospectionService** | 60% | 55% | 70% | 100% | 🟠 |
-| **TableDetailsService** | 60% | 55% | 70% | 100% | 🟠 |
-| **TriggerService** | 50% | 45% | 60% | 100% | 🟠 |
-| **JSON-RPC** | 75% | 70% | 80% | 100% | 🟡 |
-| **DTOs** | 95% | N/A | 100% | 100% | ✅ |
-| **Config** | 100% | N/A | 100% | 100% | ✅ |
-| **TOTAL** | **~82%** | **~75%** | **~85%** | **100%** | 🟢 |
+| Métrica | Cobertura | Total | Status |
+|---------|-----------|-------|--------|
+| **Instruções** | **75%** | 1.967 de 2.607 | 🟡 |
+| **Branches** | **60%** | 74 de 122 | 🟠 |
+| **Linhas** | **78%** | 417 de 561 | 🟡 |
+| **Métodos** | **85%** | 111 de 139 | 🟢 |
+| **Classes** | **83%** | 29 de 35 | 🟢 |
+
+#### Cobertura por Pacote
+
+| Pacote | Instruções | Branches | Classes | Status |
+|--------|-----------|----------|---------|--------|
+| **com.magacho.aiToSql.config** | 100% | n/a | 3/3 | ✅ |
+| **com.magacho.aiToSql.controller** | 91% | 80% | 1/1 | ✅ |
+| **com.magacho.aiToSql.tools** | 87% | 52% | 3/3 | 🟢 |
+| **com.magacho.aiToSql.dto** | 78% | 85% | 11/17 | 🟡 |
+| **com.magacho.aiToSql.jsonrpc** | 67% | n/a | 3/3 | 🟡 |
+| **com.magacho.aiToSql.service** | 66% | 54% | 7/7 | 🟡 |
+| **com.magacho.aiToSql** | 15% | n/a | 1/1 | 🔴 |
 
 ### 🧪 Testes Implementados
 
-- **Total de Testes**: 25
-  - SecureQueryServiceTest: 13 testes
-  - McpControllerTest: 7 testes
-  - McpToolsRegistryTest: 5 testes
+- **Total de Testes**: 69 testes (100% passando)
+  - **Testes de Integração**: 29 testes
+    - SchemaServiceIntegrationTest: 9 testes
+    - SecureQueryServiceIntegrationTest: 8 testes
+    - McpControllerIntegrationTest: 12 testes
+  - **Testes Unitários**: 31 testes
+    - SchemaServiceTest: 8 testes
+    - SecureQueryServiceTest: 7 testes
+    - TokenizationMetricsServiceTest: 16 testes
+  - **Testes End-to-End**: 9 testes
+    - EndToEndJourneyTest: 9 testes (jornada completa)
 
-### ✨ Funcionalidades
+### ✨ Funcionalidades Principais
 
-- ✅ Protocolo JSON-RPC 2.0 completo
-- ✅ 4 ferramentas MCP (getSchemaStructure, getTableDetails, listTriggers, secureDatabaseQuery)
-- ✅ Suporte multi-banco (PostgreSQL, MySQL, Oracle, MSSQL)
-- ✅ Segurança SQL (validação SELECT-only)
-- ✅ Cache de metadados (30 minutos)
-- ✅ Documentação completa
+#### 1. Implementação Completa do MCP
+- ✅ Servidor JSON-RPC 2.0 compatível com MCP
+- ✅ Protocolo de inicialização e negociação de capabilities
+- ✅ Suporte a ferramentas (tools) para LLMs
+- ✅ Error handling robusto com códigos JSON-RPC
+
+#### 2. Ferramentas MCP
+- ✅ **getSchemaStructure**: Introspecção completa do schema
+- ✅ **getTableDetails**: Detalhes de tabelas (índices, FKs, PKs, constraints)
+- ✅ **listTriggers**: Lista triggers por tabela
+- ✅ **secureDatabaseQuery**: Execução segura de queries SQL
+
+#### 3. Tokenização e Métricas
+- ✅ Estimativa de tokens para 8 modelos LLM:
+  - GPT-4, GPT-3.5-turbo
+  - Claude 2, Claude Instant
+  - Llama 2, Llama 3
+  - Mistral 7B
+- ✅ Métricas de performance (tempo de execução)
+- ✅ Estimativa de custos por modelo
+- ✅ Cache com métricas de hit/miss
+- ✅ Metadata incluído em todas as respostas
+
+#### 4. Suporte Multi-Database
+- ✅ PostgreSQL
+- ✅ MySQL
+- ✅ Oracle
+- ✅ Microsoft SQL Server
+- ✅ H2 (para testes)
 
 ### 🔒 Segurança
 
-- ✅ Validação de queries SELECT
-- ✅ Bloqueio de comandos perigosos (DROP, DELETE, UPDATE, INSERT)
-- ✅ Detecção de SQL injection
-- ✅ Limite de resultados (1000 linhas)
-- ✅ Logging de segurança
+- ✅ Validação de queries (apenas SELECT permitido)
+- ✅ Usuário read-only recomendado
+- ✅ Prepared statements (JdbcTemplate)
+- ✅ Validação de input JSON-RPC
+- ✅ Error handling sem expor detalhes internos
 
 ### 📝 Documentação
 
-- README.md
-- QUICKSTART.md
-- IMPLEMENTATION_SUMMARY.md
-- PROJECT_STATUS.md
-- TESTING_GUIDE.md
-- TOKENIZATION_GUIDE.md
-- COVERAGE_REPORT.md
-- EXECUTAR_TESTES.md
+- ✅ README.md completo
+- ✅ QUICKSTART.md
+- ✅ TESTING_GUIDE.md
+- ✅ TOKENIZATION_GUIDE.md
+- ✅ TOKENIZATION_ARCHITECTURE.md
+- ✅ TOKENIZATION_IMPLEMENTATION.md
+- ✅ COVERAGE_REPORT.md
+- ✅ PERFORMANCE_METRICS.md
+- ✅ RELEASE-0.1.0.md (Release Notes)
 
 ### 🐛 Issues Conhecidos
 
-- [ ] Triggers não testados para todos os bancos
-- [ ] Serviços de infraestrutura com baixa cobertura unitária
-- [ ] Falta teste de integração com banco real
+Nenhum problema crítico conhecido nesta release.
 
-### 📈 Melhorias Planejadas para v1.0.0
+### 📈 Melhorias Planejadas para v0.2.0
 
-- [ ] Aumentar cobertura de SchemaIntrospectionService para 80%
-- [ ] Adicionar testes de integração com Docker
-- [ ] Implementar testes de performance
-- [ ] Adicionar métricas de observabilidade
+- [ ] Suporte a LLM local (Ollama) para tokenização real
+- [ ] API REST adicional para facilitar testes
+- [ ] Dashboard web para monitoramento
+- [ ] Métricas avançadas (Prometheus/Grafana)
+- [ ] Aumentar cobertura para 85%+
+
+### 📦 Artifacts da Release
+
+- **Código fonte**: Tag `REL-0.1.0` no GitHub
+- **Relatório de Cobertura**: `coverage-report-0.1.0.tar.gz` (159KB)
+- **Release Notes**: `RELEASE-0.1.0.md`
+
+### 🔗 Links
+
+- **GitHub Release**: https://github.com/magacho/aiToSql/releases/tag/REL-0.1.0
+- **Repositório**: https://github.com/magacho/aiToSql
+- **MCP Specification**: https://spec.modelcontextprotocol.io/
+
+---
+
+## 📋 Versão 0.0.1-SNAPSHOT (Desenvolvimento Histórico)
+
+**Data**: Outubro de 2024  
+**Status**: 🚧 Desenvolvimento (Substituído por 0.1.0)
 
 ---
 
@@ -143,7 +199,8 @@ Este documento mantém o histórico de todas as releases do projeto, incluindo m
 
 | Versão | Meta de Cobertura | Status Atual |
 |--------|------------------|--------------|
-| 0.0.1-SNAPSHOT | ≥ 75% | ✅ 82% |
+| 0.1.0 | ≥ 75% | ✅ 75% (Released) |
+| 0.2.0 | ≥ 80% | 🚧 Planejado |
 | 1.0.0 | ≥ 85% | 🚧 Planejado |
 | 1.1.0 | ≥ 90% | 🚧 Planejado |
 | 2.0.0 | ≥ 95% | 🚧 Planejado |
@@ -155,17 +212,17 @@ Este documento mantém o histórico de todas as releases do projeto, incluindo m
 ```
 Cobertura de Testes (%)
 100% │
- 95% │                                    ← v2.0.0 (meta)
- 90% │                          ← v1.1.0 (meta)
- 85% │                ← v1.0.0 (meta)
- 80% │      ✓
- 75% │      │
+ 95% │                                              ← v2.0.0 (meta)
+ 90% │                                    ← v1.1.0 (meta)
+ 85% │                          ← v1.0.0 (meta)
+ 80% │                ← v0.2.0 (meta)
+ 75% │      ✓
  70% │      │
  65% │      │
  60% │      │
-     └──────┴──────────────────────────────────────────
-       0.0.1  1.0.0    1.1.0    2.0.0
-       (atual) (Q1'25)  (Q2'25)  (Q4'25)
+     └──────┴──────────────────────────────────────────────────
+       0.1.0  0.2.0    1.0.0    1.1.0    2.0.0
+       (atual) (Q1'25) (Q2'25)  (Q3'25)  (Q4'25)
 ```
 
 ---
@@ -309,10 +366,10 @@ Para adicionar badge no README.md:
 
 | Período | Meta | Ações |
 |---------|------|-------|
-| **Q4 2024** | 82% → 85% | Adicionar testes de Schema/Table services |
-| **Q1 2025** | 85% → 90% | Testes de integração com Docker |
-| **Q2 2025** | 90% → 95% | Testes end-to-end completos |
-| **Q3 2025** | 95%+ | Testes de mutação e property-based |
+| **Q4 2024** | 75% → 80% | Melhorar testes de service layer |
+| **Q1 2025** | 80% → 85% | Adicionar testes de integração com Docker |
+| **Q2 2025** | 85% → 90% | Testes end-to-end completos |
+| **Q3 2025** | 90% → 95% | Testes de mutação e property-based |
 
 ---
 
@@ -325,5 +382,6 @@ Para adicionar badge no README.md:
 
 ---
 
-**Última atualização**: 28 de Outubro de 2024  
-**Próxima revisão**: Release v1.0.0
+**Última atualização**: 28 de Outubro de 2025  
+**Última Release**: v0.1.0 (28 de Outubro de 2025)  
+**Próxima revisão**: Release v0.2.0 (Planejada para Q1 2025)
