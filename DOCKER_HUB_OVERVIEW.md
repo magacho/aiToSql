@@ -67,18 +67,20 @@ docker pull flaviomagacho/aitosql:latest
 docker pull flaviomagacho/aitosql:0.3.0
 ```
 
-### 2️⃣ Execução Rápida
+### 2️⃣ Execução Rápida (Detecção Automática de Driver)
 
 ```bash
+# O driver JDBC é detectado automaticamente da URL!
 docker run -d \
   --name aitosql \
   -e DB_URL="jdbc:postgresql://localhost:5432/mydb" \
   -e DB_USERNAME="readonly_user" \
   -e DB_PASSWORD="secure_password" \
-  -e DB_TYPE="PostgreSQL" \
   -p 8080:8080 \
   flaviomagacho/aitosql:0.3.0
 ```
+
+> 🎯 **Novo!** Não é necessário especificar `DB_TYPE` - o driver é detectado automaticamente da URL JDBC.
 
 ### 3️⃣ Usando Docker Compose
 
@@ -92,7 +94,7 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/mydb
       DB_USERNAME: readonly_user
       DB_PASSWORD: secure_password
-      DB_TYPE: PostgreSQL
+      # DB_TYPE não é mais necessário - detectado automaticamente!
     ports:
       - "8080:8080"
     depends_on:
@@ -118,7 +120,7 @@ services:
       DB_URL: jdbc:mysql://mysql:3306/mydb
       DB_USERNAME: readonly_user
       DB_PASSWORD: secure_password
-      DB_TYPE: MySQL
+      # DB_TYPE não é mais necessário - detectado automaticamente!
     ports:
       - "8080:8080"
     depends_on:
@@ -144,9 +146,32 @@ services:
 | `DB_URL` | ✅ | JDBC connection URL | `jdbc:postgresql://host:5432/db` |
 | `DB_USERNAME` | ✅ | Database username (READ-ONLY) | `readonly_user` |
 | `DB_PASSWORD` | ✅ | Database password | `secure_password` |
-| `DB_TYPE` | ✅ | Database dialect | `PostgreSQL`, `MySQL`, `Oracle`, `MSSQL` |
+| `DB_TYPE` | ⭐ | Database type (auto-detectado) | `postgresql`, `mysql`, `oracle`, `sqlserver` |
 | `SERVER_PORT` | ❌ | Porta do servidor (padrão: 8080) | `8080` |
 | `SPRING_PROFILES_ACTIVE` | ❌ | Spring profiles | `prod` |
+
+### 🎯 Detecção Automática de Driver JDBC
+
+**Novidade na v0.3.0+**: O driver JDBC é **automaticamente detectado** da URL!
+
+#### Bancos Suportados:
+- ✅ **PostgreSQL**: `jdbc:postgresql://...` → `org.postgresql.Driver`
+- ✅ **MySQL**: `jdbc:mysql://...` → `com.mysql.cj.jdbc.Driver`
+- ✅ **SQL Server**: `jdbc:sqlserver://...` → `com.microsoft.sqlserver.jdbc.SQLServerDriver`
+- ✅ **Oracle**: `jdbc:oracle:...` → `oracle.jdbc.OracleDriver`
+
+#### Como Funciona:
+```bash
+# ❌ ANTES: Era necessário especificar o driver
+docker run -e DB_URL="..." -e DB_TYPE="postgresql" ...
+
+# ✅ AGORA: Driver detectado automaticamente
+docker run -e DB_URL="jdbc:postgresql://..." ...
+```
+
+> 💡 **Dica**: Você ainda pode usar `DB_TYPE` se preferir ser explícito, mas não é mais obrigatório!
+
+Para mais detalhes, veja: [JDBC Driver Auto-Detection](JDBC_DRIVER_AUTO_DETECTION.md)
 
 ### ⚠️ Segurança
 - **SEMPRE** use um usuário com permissões **READ-ONLY** (SELECT apenas)

@@ -19,15 +19,17 @@ docker pull flaviomagacho/aitosql:latest
 ### Run with PostgreSQL
 
 ```bash
+# Driver é detectado automaticamente da URL!
 docker run -d \
   --name aitosql-mcp \
   -e DB_URL="jdbc:postgresql://your-postgres-host:5432/your_database" \
   -e DB_USERNAME="readonly_user" \
   -e DB_PASSWORD="your_secure_password" \
-  -e DB_TYPE="PostgreSQL" \
   -p 8080:8080 \
   flaviomagacho/aitosql:latest
 ```
+
+> 🎯 **Novo!** Não é necessário especificar `DB_TYPE` - o driver JDBC é detectado automaticamente da URL.
 
 ### Test the Server
 
@@ -55,17 +57,19 @@ curl -X POST http://localhost:8080/mcp/tools/call \
 | `DB_URL` | JDBC connection URL | `jdbc:postgresql://host:5432/db` |
 | `DB_USERNAME` | Database username (READ-ONLY recommended) | `readonly_user` |
 | `DB_PASSWORD` | Database password | `secure_password` |
-| `DB_TYPE` | Database type (for identification) | `PostgreSQL`, `MySQL`, `Oracle`, `MSSQL` |
 
 ### Optional Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `DB_DRIVER` | Auto-detected | JDBC driver class name |
+| `DB_TYPE` | Auto-detected | Override driver detection: `postgresql`, `mysql`, `oracle`, `sqlserver` |
+| `DB_DRIVER` | Auto-detected | JDBC driver class name (rarely needed) |
 | `SERVER_PORT` | `8080` | HTTP server port |
 | `CACHE_ENABLED` | `true` | Enable schema caching |
 | `LOGGING_LEVEL_ROOT` | `INFO` | Root logging level |
 | `LOGGING_LEVEL_COM_MAGACHO` | `INFO` | Application logging level |
+
+> ✨ **Smart Detection**: O driver JDBC é automaticamente detectado do padrão da URL. Use `DB_TYPE` apenas se quiser sobrescrever a detecção automática.
 
 ---
 
@@ -85,13 +89,12 @@ The Docker image includes drivers for:
 ### Using Docker Run
 
 ```bash
+# Driver detectado automaticamente!
 docker run -d \
   --name aitosql-postgres \
   -e DB_URL="jdbc:postgresql://postgres.example.com:5432/production_db" \
   -e DB_USERNAME="readonly_user" \
   -e DB_PASSWORD="ReadOnlyPassword123!" \
-  -e DB_DRIVER="org.postgresql.Driver" \
-  -e DB_TYPE="PostgreSQL" \
   -e SERVER_PORT="8080" \
   -p 8080:8080 \
   --restart unless-stopped \
@@ -111,7 +114,7 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/mydb
       DB_USERNAME: readonly_user
       DB_PASSWORD: readonly_password
-      DB_TYPE: PostgreSQL
+      # DB_TYPE: PostgreSQL  # Opcional - auto-detectado da URL
       SERVER_PORT: 8080
     ports:
       - "8080:8080"
@@ -125,13 +128,12 @@ services:
 ### Using Docker Run
 
 ```bash
+# Driver detectado automaticamente!
 docker run -d \
   --name aitosql-mysql \
   -e DB_URL="jdbc:mysql://mysql.example.com:3306/production_db" \
   -e DB_USERNAME="readonly_user" \
   -e DB_PASSWORD="ReadOnlyPassword123!" \
-  -e DB_DRIVER="com.mysql.cj.jdbc.Driver" \
-  -e DB_TYPE="MySQL" \
   -e SERVER_PORT="8080" \
   -p 8080:8080 \
   --restart unless-stopped \
@@ -151,7 +153,7 @@ services:
       DB_URL: jdbc:mysql://mysql:3306/mydb
       DB_USERNAME: readonly_user
       DB_PASSWORD: readonly_password
-      DB_TYPE: MySQL
+      # DB_TYPE: MySQL  # Opcional - auto-detectado da URL
       SERVER_PORT: 8080
     ports:
       - "8080:8080"
@@ -163,13 +165,12 @@ services:
 ## 🔷 SQL Server Example
 
 ```bash
+# Driver detectado automaticamente!
 docker run -d \
   --name aitosql-sqlserver \
   -e DB_URL="jdbc:sqlserver://sqlserver.example.com:1433;databaseName=production_db;encrypt=true;trustServerCertificate=false" \
   -e DB_USERNAME="readonly_user" \
   -e DB_PASSWORD="ReadOnlyPassword123!" \
-  -e DB_DRIVER="com.microsoft.sqlserver.jdbc.SQLServerDriver" \
-  -e DB_TYPE="MSSQL" \
   -e SERVER_PORT="8080" \
   -p 8080:8080 \
   --restart unless-stopped \
