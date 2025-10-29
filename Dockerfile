@@ -11,7 +11,7 @@
 # ============================================================================
 # STAGE 1: BUILD
 # ============================================================================
-FROM eclipse-temurin:17-jdk-alpine AS builder
+FROM eclipse-temurin:17-jdk-jammy AS builder
 
 WORKDIR /app
 
@@ -32,10 +32,10 @@ RUN ./mvnw clean package -DskipTests -B
 # ============================================================================
 # STAGE 2: RUNTIME
 # ============================================================================
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre-jammy
 
 # Install curl for health checks
-RUN apk add --no-cache curl
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -47,7 +47,7 @@ COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Create non-root user for security
-RUN addgroup -S spring && adduser -S spring -G spring
+RUN groupadd -r spring && useradd -r -g spring spring
 
 # Change ownership of app directory
 RUN chown -R spring:spring /app
