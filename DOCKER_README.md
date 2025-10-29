@@ -29,10 +29,11 @@ docker run -d \
   -e DB_URL="jdbc:postgresql://your-host:5432/your_database" \
   -e DB_USERNAME="readonly_user" \
   -e DB_PASSWORD="your_password" \
-  -e DB_TYPE="PostgreSQL" \
   -p 8080:8080 \
   flaviomagacho/aitosql:latest
 ```
+
+> **Note**: No need to specify `DB_TYPE` - the driver is automatically detected from the URL! 🎉
 
 ### Run with MySQL
 
@@ -42,7 +43,6 @@ docker run -d \
   -e DB_URL="jdbc:mysql://your-host:3306/your_database" \
   -e DB_USERNAME="readonly_user" \
   -e DB_PASSWORD="your_password" \
-  -e DB_TYPE="MySQL" \
   -p 8080:8080 \
   flaviomagacho/aitosql:latest
 ```
@@ -55,7 +55,6 @@ docker run -d \
   -e DB_URL="jdbc:sqlserver://your-host:1433;databaseName=your_database" \
   -e DB_USERNAME="readonly_user" \
   -e DB_PASSWORD="your_password" \
-  -e DB_TYPE="SQLServer" \
   -p 8080:8080 \
   flaviomagacho/aitosql:latest
 ```
@@ -86,9 +85,14 @@ curl -X POST http://localhost:8080/mcp/tools/call \
 | `DB_URL` | JDBC connection URL | `jdbc:postgresql://host:5432/db` |
 | `DB_USERNAME` | Database username (READ-ONLY) | `readonly_user` |
 | `DB_PASSWORD` | Database password | `secure_password` |
-| `DB_TYPE` | Database type | `PostgreSQL`, `MySQL`, `SQLServer`, `Oracle` |
 
-**Note**: If `DB_TYPE` is not specified, the driver will be auto-detected from the JDBC URL.
+### Optional (Driver Detection)
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DB_TYPE` | Auto-detected | Override driver auto-detection: `postgresql`, `mysql`, `sqlserver`, `oracle` |
+
+**✨ Smart Driver Detection**: The JDBC driver is automatically detected from your `DB_URL`! No need to specify `DB_TYPE` unless you want to override the auto-detection.
 
 ### Optional
 
@@ -166,7 +170,6 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/mydb
       DB_USERNAME: readonly_user
       DB_PASSWORD: readonly_password
-      DB_TYPE: PostgreSQL
     ports:
       - "8080:8080"
 
@@ -198,7 +201,6 @@ services:
       DB_URL: jdbc:mysql://mysql:3306/mydb
       DB_USERNAME: readonly_user
       DB_PASSWORD: readonly_password
-      DB_TYPE: MySQL
     ports:
       - "8080:8080"
 

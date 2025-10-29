@@ -1,5 +1,6 @@
 package com.magacho.aiToSql.controller;
 
+import com.magacho.aiToSql.config.JdbcDriverResolver;
 import com.magacho.aiToSql.config.McpServerConfig;
 import com.magacho.aiToSql.dto.ResponseMetadata;
 import com.magacho.aiToSql.dto.TokenizationMetrics;
@@ -30,12 +31,15 @@ public class McpController {
     private final McpToolsRegistry toolsRegistry;
     private final McpServerConfig config;
     private final TokenizationMetricsService metricsService;
+    private final JdbcDriverResolver driverResolver;
 
     public McpController(McpToolsRegistry toolsRegistry, McpServerConfig config, 
-                         TokenizationMetricsService metricsService) {
+                         TokenizationMetricsService metricsService,
+                         JdbcDriverResolver driverResolver) {
         this.toolsRegistry = toolsRegistry;
         this.config = config;
         this.metricsService = metricsService;
+        this.driverResolver = driverResolver;
     }
 
     /**
@@ -246,5 +250,29 @@ public class McpController {
     public ResponseEntity<Map<String, String>> resetMetrics() {
         metricsService.resetMetrics();
         return ResponseEntity.ok(Map.of("status", "Metrics reset successfully"));
+    }
+    
+    /**
+     * Get supported databases and their driver mappings
+     */
+    @GetMapping(path = "/supported-databases", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> getSupportedDatabases() {
+        Map<String, String> databases = driverResolver.getSupportedDatabases();
+        
+        return ResponseEntity.ok(Map.of(
+                "supportedDatabases", databases,
+                "autoDetection", Map.of(
+                        "enabled", true,
+                        "description", "JDBC driver is automatically detected from DB_URL pattern",
+                        "override", "Use DB_TYPE environment variable to override auto-detection"
+                ),
+                "examples", Map.of(
+                        "postgresql", "jdbc:postgresql://localhost:5432/mydb",
+                        "mysql", "jdbc:mysql://localhost:3306/mydb",
+                        "sqlserver", "jdbc:sqlserver://localhost:1433;databaseName=mydb",
+                        "oracle", "jdbc:oracle:thin:@localhost:1521:xe",
+                        "h2", "jdbc:h2:mem:testdb"
+                )
+        ));
     }
 }

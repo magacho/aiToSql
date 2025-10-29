@@ -7,6 +7,7 @@
 ## Key Features
 
 - **Database Agnostic**: Supports Oracle, MySQL, PostgreSQL, and MSSQL
+- **🎯 Automatic Driver Detection**: Smart JDBC driver resolution from URL patterns
 - **JSON-RPC 2.0 Transport**: Standard communication protocol for MCP
 - **Schema Introspection**: Complete database metadata discovery
 - **Secure Querying**: SQL injection prevention with READ-ONLY enforcement
@@ -67,8 +68,6 @@ docker run -d \
   -e DB_URL="jdbc:postgresql://your-host:5432/your_db" \
   -e DB_USERNAME="readonly_user" \
   -e DB_PASSWORD="your_password" \
-  -e DB_TYPE="PostgreSQL" \
-  -e DB_DRIVER="org.postgresql.Driver" \
   -p 8080:8080 \
   flaviomagacho/aitosql:latest
 
@@ -76,6 +75,8 @@ docker run -d \
 curl http://localhost:8080/actuator/health
 curl http://localhost:8080/mcp/tools/list
 ```
+
+> **✨ New Feature**: No need to specify `DB_TYPE` or `DB_DRIVER` - they are automatically detected! See [JDBC Driver Auto-Detection](JDBC_DRIVER_AUTO_DETECTION.md)
 
 **Or use Docker Compose for local development**:
 
