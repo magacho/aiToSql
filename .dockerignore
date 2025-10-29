@@ -45,9 +45,8 @@ PROJECT_STATUS*.md
 TESTING*.md
 TOKENIZATION*.md
 
-# Scripts (not needed in image)
-*.sh
-!mvnw
+# Scripts (exclude root-level scripts except critical ones)
+/*.sh
 !docker-entrypoint.sh
 
 # Docker files (not needed in image)
