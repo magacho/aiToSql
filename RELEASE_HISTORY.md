@@ -136,6 +136,35 @@ Nenhum problema crítico conhecido nesta release.
 ---
 
 ## 📋 Versão 0.0.1-SNAPSHOT (Desenvolvimento Histórico)
+## 📋 Versão 0.3.0
+
+**Data**: 29 de October de 2025  
+**Status**: 🚀 Produção
+
+### 📊 Cobertura de Testes
+
+| Métrica | Valor | Status |
+|---------|-------|--------|
+| **Cobertura Total** | 75.5% | ⚠️ |
+| **Total de Testes** | 76 | ✅ |
+| **Testes com Falha** | 0 | ✅ |
+
+### ✨ Novas Funcionalidades
+
+- Release automático via tag REL-0.3.0
+- Relatório de cobertura incluído
+
+### 🔧 Correções
+
+- Melhorias gerais de estabilidade
+
+### 📦 Artefatos
+
+- JAR: aiToSql-0.3.0.jar
+- Relatório JaCoCo: jacoco-0.3.0.zip
+
+---
+
 
 **Data**: Outubro de 2024  
 **Status**: 🚧 Desenvolvimento (Substituído por 0.1.0)
