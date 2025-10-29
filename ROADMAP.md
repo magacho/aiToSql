@@ -259,35 +259,6 @@ docker-compose -f docker-compose-sqlserver.yml up -d
 
 ---
 
-### 2.2 Kubernetes Deployment (Opcional) ☸️
-**Prioridade**: BAIXA  
-**Estimativa**: 3 dias
-
-#### Tarefas:
-- [ ] **Helm Chart** (2 dias)
-  - Chart para deployment no Kubernetes
-  - ConfigMap para variáveis de ambiente
-  - Secrets para credenciais
-  - Service + Ingress
-  - HorizontalPodAutoscaler
-  - Testes em Minikube
-  
-- [ ] **Manifests YAML** (1 dia)
-  - deployment.yaml
-  - service.yaml
-  - configmap.yaml
-  - secret.yaml
-  - Documentação de deploy K8s
-
-#### Deliverables:
-- ✅ Helm chart publicado
-- ✅ Manifests YAML de exemplo
-- ✅ Documentação K8s (KUBERNETES_DEPLOYMENT.md)
-
-**Impacto na Cobertura**: +0%
-
----
-
 ## 🤖 Próxima Fase - v0.3.0: Integração com LLMs Reais
 
 **Objetivo**: Conectar com APIs de LLMs para Text-to-SQL e análise inteligente  
