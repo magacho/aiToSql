@@ -48,6 +48,7 @@ TOKENIZATION*.md
 # Scripts (not needed in image)
 *.sh
 !mvnw
+!docker-entrypoint.sh
 
 # Docker files (not needed in image)
 docker-compose*.yml
