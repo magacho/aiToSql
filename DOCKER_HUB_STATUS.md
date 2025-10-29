@@ -11,9 +11,9 @@ O workflow `.github/workflows/release.yml` possui um job `docker-publish` que:
 - Depende do job `release` completar com sucesso
 - Faz build multi-arquitetura (amd64, arm64)
 - Publica 3 tags:
-  - `magacho/aitosql-mcp-server:latest`
-  - `magacho/aitosql-mcp-server:X.X.X`
-  - `magacho/aitosql-mcp-server:vX.X.X`
+  - `flaviomagacho/aitosql:latest`
+  - `flaviomagacho/aitosql:X.X.X`
+  - `flaviomagacho/aitosql:vX.X.X`
 
 ### Problema Identificado ❌
 O job `release` está falhando com **erro 403** ao tentar criar a release no GitHub:
@@ -115,7 +115,7 @@ Após a correção e configuração das secrets, ao criar uma tag `REL-X.X.X`:
 
 ## 🔗 Links Úteis
 
-- **Docker Hub Repository**: https://hub.docker.com/r/magacho/aitosql-mcp-server (ainda não existe)
+- **Docker Hub Repository**: https://hub.docker.com/r/flaviomagacho/aitosql (ainda não existe)
 - **GitHub Actions**: https://github.com/magacho/aiToSql/actions
 - **Workflow Release**: https://github.com/magacho/aiToSql/blob/main/.github/workflows/release.yml
 

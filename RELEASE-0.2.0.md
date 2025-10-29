@@ -210,7 +210,7 @@ Drivers incluídos:
 ### Opção 1: Docker Run (Mais Simples)
 
 ```bash
-docker pull magacho/aitosql-mcp-server:0.2.0
+docker pull flaviomagacho/aitosql:0.2.0
 
 docker run -d \
   --name aitosql-mcp \
@@ -220,7 +220,7 @@ docker run -d \
   -e DB_TYPE="PostgreSQL" \
   -e DB_DRIVER="org.postgresql.Driver" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:0.2.0
+  flaviomagacho/aitosql:0.2.0
 ```
 
 ### Opção 2: Docker Compose (Recomendado)
@@ -355,7 +355,7 @@ git push origin feature/minha-feature
 
 ## 🔗 Links
 
-- **Docker Hub**: https://hub.docker.com/r/magacho/aitosql-mcp-server (aguardando publicação)
+- **Docker Hub**: https://hub.docker.com/r/flaviomagacho/aitosql (aguardando publicação)
 - **GitHub**: https://github.com/magacho/aiToSql
 - **Issues**: https://github.com/magacho/aiToSql/issues
 - **Discussions**: https://github.com/magacho/aiToSql/discussions

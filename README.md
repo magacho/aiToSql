@@ -59,7 +59,7 @@ The easiest way to run the MCP Server is using Docker:
 
 ```bash
 # Pull the image from Docker Hub
-docker pull magacho/aitosql-mcp-server:latest
+docker pull flaviomagacho/aitosql:latest
 
 # Run with PostgreSQL
 docker run -d \
@@ -70,7 +70,7 @@ docker run -d \
   -e DB_TYPE="PostgreSQL" \
   -e DB_DRIVER="org.postgresql.Driver" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 
 # Test the server
 curl http://localhost:8080/actuator/health

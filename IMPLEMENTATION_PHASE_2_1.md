@@ -29,10 +29,10 @@ Implementar containerização completa do aiToSql MCP Server com suporte a múlt
 **Comandos de exemplo incluídos**:
 ```dockerfile
 # Build
-docker build -t magacho/aitosql-mcp-server:latest .
+docker build -t flaviomagacho/aitosql:latest .
 
 # Run com PostgreSQL
-docker run -d -e DB_URL="..." -p 8080:8080 magacho/aitosql-mcp-server:latest
+docker run -d -e DB_URL="..." -p 8080:8080 flaviomagacho/aitosql:latest
 ```
 
 ---
@@ -331,7 +331,7 @@ docker-compose -f docker-compose-sqlserver.yml up -d
 
 ### 1. Build Local
 ```bash
-docker build -t magacho/aitosql-mcp-server:0.2.0 .
+docker build -t flaviomagacho/aitosql:0.2.0 .
 ```
 
 ### 2. Teste com PostgreSQL
@@ -390,7 +390,7 @@ docker-compose -f docker-compose-sqlserver.yml down -v
    ```
 
 4. **Verificar no Docker Hub**
-   - Acessar: https://hub.docker.com/r/magacho/aitosql-mcp-server
+   - Acessar: https://hub.docker.com/r/flaviomagacho/aitosql
    - Verificar tags: `0.2.0`, `0.2`, `0`, `latest`
 
 5. **Criar Git Tag e Release**

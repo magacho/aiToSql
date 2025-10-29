@@ -72,7 +72,7 @@ gantt
 
 **Objetivos**:
 - [ ] 🐳 Dockerfile multi-stage otimizado
-- [ ] 📦 Docker Hub: `magacho/aitosql-mcp-server`
+- [ ] 📦 Docker Hub: `flaviomagacho/aitosql`
 - [ ] ⚙️ Configuração 100% via ENV
 - [ ] 🔧 Suporte a 4 bancos no container
 - [ ] 📝 Documentação completa
@@ -268,7 +268,7 @@ v0.7.0: 94% █████████████████████ 🎯
 
 - **Repositório**: https://github.com/magacho/aiToSql
 - **Issues**: https://github.com/magacho/aiToSql/issues
-- **Docker Hub**: https://hub.docker.com/r/magacho/aitosql-mcp-server (em breve)
+- **Docker Hub**: https://hub.docker.com/r/flaviomagacho/aitosql (em breve)
 - **Discussions**: https://github.com/magacho/aiToSql/discussions
 
 ---

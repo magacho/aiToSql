@@ -82,9 +82,9 @@ Jobs:
 
 **Tags Publicadas Automaticamente**:
 ```
-magacho/aitosql-mcp-server:latest
-magacho/aitosql-mcp-server:0.3.0
-magacho/aitosql-mcp-server:v0.3.0
+flaviomagacho/aitosql:latest
+flaviomagacho/aitosql:0.3.0
+flaviomagacho/aitosql:v0.3.0
 ```
 
 ---
@@ -142,7 +142,7 @@ DOCKERHUB_TOKEN    = <Access Token do Docker Hub>
 ### Desenvolvimento
 ```bash
 # Build local
-docker build -t magacho/aitosql-mcp-server:test .
+docker build -t flaviomagacho/aitosql:test .
 
 # Run com PostgreSQL
 docker run -d \
@@ -151,20 +151,20 @@ docker run -d \
   -e DB_PASSWORD="pass" \
   -e DB_TYPE="PostgreSQL" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:test
+  flaviomagacho/aitosql:test
 ```
 
 ### Produção (Após Release)
 ```bash
 # Pull
-docker pull magacho/aitosql-mcp-server:0.3.0
+docker pull flaviomagacho/aitosql:0.3.0
 
 # Run
 docker run -d \
   -e DB_URL="jdbc:postgresql://prod:5432/db" \
   -e DB_USERNAME="readonly" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:0.3.0
+  flaviomagacho/aitosql:0.3.0
 ```
 
 ---
@@ -305,7 +305,7 @@ Removidos:
 ## 🔗 Links Úteis
 
 - **Repositório**: https://github.com/magacho/aiToSql
-- **Docker Hub**: https://hub.docker.com/r/magacho/aitosql-mcp-server (após publicação)
+- **Docker Hub**: https://hub.docker.com/r/flaviomagacho/aitosql (após publicação)
 - **GitHub Actions**: https://github.com/magacho/aiToSql/actions
 - **Issues**: https://github.com/magacho/aiToSql/issues
 

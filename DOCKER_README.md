@@ -31,7 +31,7 @@ docker run -d \
   -e DB_PASSWORD="your_password" \
   -e DB_TYPE="PostgreSQL" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 ```
 
 ### Run with MySQL
@@ -44,7 +44,7 @@ docker run -d \
   -e DB_PASSWORD="your_password" \
   -e DB_TYPE="MySQL" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 ```
 
 ### Run with SQL Server
@@ -57,7 +57,7 @@ docker run -d \
   -e DB_PASSWORD="your_password" \
   -e DB_TYPE="SQLServer" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 ```
 
 ### Test the Server
@@ -159,7 +159,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   mcp-server:
-    image: magacho/aitosql-mcp-server:latest
+    image: flaviomagacho/aitosql:latest
     depends_on:
       - postgres
     environment:
@@ -191,7 +191,7 @@ services:
       - mysql_data:/var/lib/mysql
 
   mcp-server:
-    image: magacho/aitosql-mcp-server:latest
+    image: flaviomagacho/aitosql:latest
     depends_on:
       - mysql
     environment:
@@ -210,7 +210,7 @@ volumes:
 
 ## 📊 Image Information
 
-- **Repository**: `magacho/aitosql-mcp-server`
+- **Repository**: `flaviomagacho/aitosql`
 - **Base Image**: `eclipse-temurin:17-jre-alpine`
 - **Size**: ~200MB (optimized multi-stage build)
 - **Architectures**: `linux/amd64`, `linux/arm64`
@@ -262,7 +262,7 @@ docker logs --tail 100 aitosql-mcp
 ## 🔗 Links
 
 - **GitHub Repository**: https://github.com/magacho/aiToSql
-- **Docker Hub**: https://hub.docker.com/r/magacho/aitosql-mcp-server
+- **Docker Hub**: https://hub.docker.com/r/flaviomagacho/aitosql
 - **Full Documentation**: https://github.com/magacho/aiToSql/blob/main/README.md
 - **Deployment Guide**: https://github.com/magacho/aiToSql/blob/main/DOCKER_DEPLOYMENT.md
 - **Issues**: https://github.com/magacho/aiToSql/issues

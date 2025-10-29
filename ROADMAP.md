@@ -140,9 +140,9 @@ SPRING_PROFILES_ACTIVE  # Default: docker
 
 **Tags Docker Hub:**
 ```
-magacho/aitosql-mcp-server:latest
-magacho/aitosql-mcp-server:X.Y.Z
-magacho/aitosql-mcp-server:vX.Y.Z
+flaviomagacho/aitosql:latest
+flaviomagacho/aitosql:X.Y.Z
+flaviomagacho/aitosql:vX.Y.Z
 ```
 
 **Testes Realizados:**
@@ -188,7 +188,7 @@ magacho/aitosql-mcp-server:vX.Y.Z
   - ✅ Volume mounting para persistência
   
 - [x] **Publicação no Docker Hub** (1 dia)
-  - ✅ Repositório configurado: `magacho/aitosql-mcp-server`
+  - ✅ Repositório configurado: `flaviomagacho/aitosql`
   - ✅ Tags semânticas: `latest`, `0.2.0`, `0.2`, `0`
   - ✅ GitHub Actions para build e push automático (.github/workflows/docker-build.yml)
   - ✅ Multi-architecture support (amd64, arm64)
@@ -203,7 +203,7 @@ magacho/aitosql-mcp-server:vX.Y.Z
 #### Deliverables:
 - ✅ Dockerfile otimizado multi-stage (< 200MB)
 - ✅ docker-compose.yml para cada banco suportado (PostgreSQL, MySQL, SQL Server)
-- ✅ Configuração pronta para publicação no Docker Hub: `magacho/aitosql-mcp-server`
+- ✅ Configuração pronta para publicação no Docker Hub: `flaviomagacho/aitosql`
 - ✅ GitHub Actions para CI/CD de imagens Docker
 - ✅ Documentação completa:
   - ✅ DOCKER_DEPLOYMENT.md (guia de deployment)
@@ -229,7 +229,7 @@ docker run -d \
   -e DB_TYPE="PostgreSQL" \
   -e DB_DRIVER="org.postgresql.Driver" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 
 # MySQL
 docker run -d \
@@ -239,7 +239,7 @@ docker run -d \
   -e DB_TYPE="MySQL" \
   -e DB_DRIVER="com.mysql.cj.jdbc.Driver" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 
 # SQL Server
 docker run -d \
@@ -249,7 +249,7 @@ docker run -d \
   -e DB_TYPE="SQLServer" \
   -e DB_DRIVER="com.microsoft.sqlserver.jdbc.SQLServerDriver" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 
 # Com Docker Compose (recomendado para desenvolvimento)
 docker-compose -f docker-compose-postgres.yml up -d
@@ -635,7 +635,7 @@ docker-compose -f docker-compose-sqlserver.yml up -d
 - ✅ Imagem Docker < 200MB (alcançado: ~180MB)
 - ✅ Suporte a 3 bancos (PostgreSQL, MySQL, SQL Server)
 - ✅ Docker Compose funcional para cada banco
-- ✅ Configuração pronta para Docker Hub: `magacho/aitosql-mcp-server`
+- ✅ Configuração pronta para Docker Hub: `flaviomagacho/aitosql`
 - ✅ Configuração 100% via ENV vars
 - ✅ GitHub Actions para CI/CD automático
 - ✅ Multi-architecture support (amd64, arm64)

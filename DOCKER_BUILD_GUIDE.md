@@ -34,8 +34,8 @@ Este guia explica como construir e publicar a imagem Docker do **aiToSql MCP Ser
 cd /caminho/para/PromptToSql
 
 # Build da imagem
-docker build -t magacho/aitosql-mcp-server:0.2.0 .
-docker build -t magacho/aitosql-mcp-server:latest .
+docker build -t flaviomagacho/aitosql:0.2.0 .
+docker build -t flaviomagacho/aitosql:latest .
 
 # Verificar imagem criada
 docker images | grep aitosql
@@ -67,7 +67,7 @@ docker run --rm -d \
   -e DB_TYPE="H2" \
   -e DB_DRIVER="org.h2.Driver" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 
 # Aguardar 15 segundos
 sleep 15
@@ -148,21 +148,21 @@ O script automaticamente:
 
 ```bash
 # 1. Build
-docker build -t magacho/aitosql-mcp-server:0.2.0 .
+docker build -t flaviomagacho/aitosql:0.2.0 .
 
 # 2. Criar tags
-docker tag magacho/aitosql-mcp-server:0.2.0 magacho/aitosql-mcp-server:0.2
-docker tag magacho/aitosql-mcp-server:0.2.0 magacho/aitosql-mcp-server:0
-docker tag magacho/aitosql-mcp-server:0.2.0 magacho/aitosql-mcp-server:latest
+docker tag flaviomagacho/aitosql:0.2.0 flaviomagacho/aitosql:0.2
+docker tag flaviomagacho/aitosql:0.2.0 flaviomagacho/aitosql:0
+docker tag flaviomagacho/aitosql:0.2.0 flaviomagacho/aitosql:latest
 
 # 3. Login (se ainda não estiver logado)
 docker login
 
 # 4. Push
-docker push magacho/aitosql-mcp-server:0.2.0
-docker push magacho/aitosql-mcp-server:0.2
-docker push magacho/aitosql-mcp-server:0
-docker push magacho/aitosql-mcp-server:latest
+docker push flaviomagacho/aitosql:0.2.0
+docker push flaviomagacho/aitosql:0.2
+docker push flaviomagacho/aitosql:0
+docker push flaviomagacho/aitosql:latest
 ```
 
 ---
@@ -215,7 +215,7 @@ git push origin main
 
 ### Docker Hub
 
-1. Acessar: https://hub.docker.com/r/magacho/aitosql-mcp-server
+1. Acessar: https://hub.docker.com/r/flaviomagacho/aitosql
 2. Verificar:
    - ✅ Tags: `0.2.0`, `0.2`, `0`, `latest`
    - ✅ Descrição (do DOCKER_README.md)
@@ -225,7 +225,7 @@ git push origin main
 
 ```bash
 # Pull
-docker pull magacho/aitosql-mcp-server:latest
+docker pull flaviomagacho/aitosql:latest
 
 # Rodar
 docker run -d \
@@ -236,7 +236,7 @@ docker run -d \
   -e DB_TYPE="H2" \
   -e DB_DRIVER="org.h2.Driver" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 
 # Testar
 curl http://localhost:8080/actuator/health
@@ -260,8 +260,8 @@ docker buildx inspect --bootstrap
 # 2. Build multi-arch
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
-  -t magacho/aitosql-mcp-server:0.2.0 \
-  -t magacho/aitosql-mcp-server:latest \
+  -t flaviomagacho/aitosql:0.2.0 \
+  -t flaviomagacho/aitosql:latest \
   --push \
   .
 ```
@@ -294,8 +294,8 @@ sudo systemctl start docker
 
 **Solução**: Usar cache do Docker
 ```bash
-docker build --cache-from magacho/aitosql-mcp-server:latest \
-  -t magacho/aitosql-mcp-server:0.2.0 .
+docker build --cache-from flaviomagacho/aitosql:latest \
+  -t flaviomagacho/aitosql:0.2.0 .
 ```
 
 ### Problema: Imagem muito grande
@@ -306,7 +306,7 @@ docker build --cache-from magacho/aitosql-mcp-server:latest \
 docker build --no-cache --progress=plain -t test . 2>&1 | grep "COPY"
 
 # Tamanho atual
-docker images magacho/aitosql-mcp-server:latest
+docker images flaviomagacho/aitosql:latest
 # Deve ser ~200MB
 ```
 
@@ -333,7 +333,7 @@ Antes de publicar uma nova versão:
 
 ## 🔗 Links Úteis
 
-- **Docker Hub**: https://hub.docker.com/r/magacho/aitosql-mcp-server
+- **Docker Hub**: https://hub.docker.com/r/flaviomagacho/aitosql
 - **GitHub Actions**: https://github.com/magacho/aiToSql/actions
 - **Dockerfile**: `/Dockerfile`
 - **Docker Compose**: `/docker-compose-*.yml`
@@ -347,7 +347,7 @@ Antes de publicar uma nova versão:
 docker images | grep aitosql
 
 # Remover imagem local
-docker rmi magacho/aitosql-mcp-server:0.2.0
+docker rmi flaviomagacho/aitosql:0.2.0
 
 # Ver logs de container
 docker logs -f container-name
@@ -362,7 +362,7 @@ docker stats container-name
 docker system prune -a
 
 # Ver tamanho de layers
-docker history magacho/aitosql-mcp-server:latest
+docker history flaviomagacho/aitosql:latest
 ```
 
 ---

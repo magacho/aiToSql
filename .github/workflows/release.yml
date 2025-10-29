@@ -286,9 +286,9 @@ jobs:
         platforms: linux/amd64,linux/arm64
         push: true
         tags: |
-          magacho/aitosql-mcp-server:latest
-          magacho/aitosql-mcp-server:${{ steps.version.outputs.version }}
-          magacho/aitosql-mcp-server:v${{ steps.version.outputs.version }}
+          flaviomagacho/aitosql:latest
+          flaviomagacho/aitosql:${{ steps.version.outputs.version }}
+          flaviomagacho/aitosql:v${{ steps.version.outputs.version }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
         
@@ -297,7 +297,7 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-        repository: magacho/aitosql-mcp-server
+        repository: flaviomagacho/aitosql
         short-description: "MCP Server for Database Introspection and Query Execution"
         readme-filepath: ./DOCKER_README.md
       continue-on-error: true
@@ -307,13 +307,13 @@ jobs:
         echo "### 🐳 Docker Image Publicado!" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "#### 🏷️ Tags Disponíveis:" >> $GITHUB_STEP_SUMMARY
-        echo "- \`magacho/aitosql-mcp-server:latest\`" >> $GITHUB_STEP_SUMMARY
-        echo "- \`magacho/aitosql-mcp-server:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
-        echo "- \`magacho/aitosql-mcp-server:v${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- \`flaviomagacho/aitosql:latest\`" >> $GITHUB_STEP_SUMMARY
+        echo "- \`flaviomagacho/aitosql:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- \`flaviomagacho/aitosql:v${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "#### 🚀 Como Usar:" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-        echo "docker pull magacho/aitosql-mcp-server:${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+        echo "docker pull flaviomagacho/aitosql:${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "docker run -d \\" >> $GITHUB_STEP_SUMMARY
         echo "  -e DB_URL=\"jdbc:postgresql://host:5432/db\" \\" >> $GITHUB_STEP_SUMMARY
@@ -321,5 +321,5 @@ jobs:
         echo "  -e DB_PASSWORD=\"password\" \\" >> $GITHUB_STEP_SUMMARY
         echo "  -e DB_TYPE=\"PostgreSQL\" \\" >> $GITHUB_STEP_SUMMARY
         echo "  -p 8080:8080 \\" >> $GITHUB_STEP_SUMMARY
-        echo "  magacho/aitosql-mcp-server:${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+        echo "  flaviomagacho/aitosql:${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

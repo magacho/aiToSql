@@ -258,7 +258,7 @@ Testes automatizados:
 
 ### Docker Hub ⏳ PENDENTE
 - ⏳ Aguardando GitHub Actions ou build manual
-- ⏳ Imagem: `magacho/aitosql-mcp-server:0.2.0`
+- ⏳ Imagem: `flaviomagacho/aitosql:0.2.0`
 - ⏳ Tags: `0.2.0`, `0.2`, `0`, `latest`
 
 **Para publicar manualmente**:

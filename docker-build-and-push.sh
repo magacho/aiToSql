@@ -11,8 +11,8 @@
 set -e
 
 # Configuration
-DOCKER_USERNAME="magacho"
-IMAGE_NAME="aitosql-mcp-server"
+DOCKER_USERNAME="flaviomagacho"
+IMAGE_NAME="aitosql"
 FULL_IMAGE_NAME="${DOCKER_USERNAME}/${IMAGE_NAME}"
 
 # Get version from parameter or default

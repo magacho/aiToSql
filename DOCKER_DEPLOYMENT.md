@@ -4,7 +4,7 @@
 
 This guide explains how to deploy the **aiToSql MCP Server** using Docker. The server is available as a pre-built image on Docker Hub and can be configured entirely through environment variables.
 
-**Docker Hub**: `magacho/aitosql-mcp-server`
+**Docker Hub**: `flaviomagacho/aitosql`
 
 ---
 
@@ -13,7 +13,7 @@ This guide explains how to deploy the **aiToSql MCP Server** using Docker. The s
 ### Pull the Image
 
 ```bash
-docker pull magacho/aitosql-mcp-server:latest
+docker pull flaviomagacho/aitosql:latest
 ```
 
 ### Run with PostgreSQL
@@ -26,7 +26,7 @@ docker run -d \
   -e DB_PASSWORD="your_secure_password" \
   -e DB_TYPE="PostgreSQL" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 ```
 
 ### Test the Server
@@ -95,7 +95,7 @@ docker run -d \
   -e SERVER_PORT="8080" \
   -p 8080:8080 \
   --restart unless-stopped \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 ```
 
 ### Using Docker Compose
@@ -105,7 +105,7 @@ version: '3.8'
 
 services:
   mcp-server:
-    image: magacho/aitosql-mcp-server:latest
+    image: flaviomagacho/aitosql:latest
     container_name: aitosql-mcp
     environment:
       DB_URL: jdbc:postgresql://postgres:5432/mydb
@@ -135,7 +135,7 @@ docker run -d \
   -e SERVER_PORT="8080" \
   -p 8080:8080 \
   --restart unless-stopped \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 ```
 
 ### Using Docker Compose
@@ -145,7 +145,7 @@ version: '3.8'
 
 services:
   mcp-server:
-    image: magacho/aitosql-mcp-server:latest
+    image: flaviomagacho/aitosql:latest
     container_name: aitosql-mcp
     environment:
       DB_URL: jdbc:mysql://mysql:3306/mydb
@@ -173,7 +173,7 @@ docker run -d \
   -e SERVER_PORT="8080" \
   -p 8080:8080 \
   --restart unless-stopped \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 ```
 
 ---
@@ -245,7 +245,7 @@ docker run -d \
   --secret db_password \
   -e DB_PASSWORD_FILE=/run/secrets/db_password \
   ... other env vars ... \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 ```
 
 ### 3. Network Isolation
@@ -261,7 +261,7 @@ networks:
 
 services:
   mcp-server:
-    image: magacho/aitosql-mcp-server:latest
+    image: flaviomagacho/aitosql:latest
     networks:
       - backend
     # No exposed ports to host
@@ -325,7 +325,7 @@ docker run -d \
   --memory="512m" \
   --cpus="1.0" \
   ... env vars ... \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 ```
 
 ---
@@ -356,7 +356,7 @@ curl http://localhost:8080/actuator/health | jq '.components.db'
 
 ```bash
 # Pull latest image
-docker pull magacho/aitosql-mcp-server:latest
+docker pull flaviomagacho/aitosql:latest
 
 # Stop and remove old container
 docker stop aitosql-mcp
@@ -367,7 +367,7 @@ docker run -d \
   --name aitosql-mcp \
   -e DB_URL="..." \
   ... same env vars ... \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 ```
 
 ---
@@ -405,7 +405,7 @@ docker run -d \
 
 - **GitHub Issues**: https://github.com/magacho/aiToSql/issues
 - **Documentation**: https://github.com/magacho/aiToSql
-- **Docker Hub**: https://hub.docker.com/r/magacho/aitosql-mcp-server
+- **Docker Hub**: https://hub.docker.com/r/flaviomagacho/aitosql
 
 ---
 

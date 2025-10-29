@@ -93,9 +93,9 @@ Oracle      → oracle.jdbc.OracleDriver
 
 **Tags Publicadas**:
 ```
-magacho/aitosql-mcp-server:latest
-magacho/aitosql-mcp-server:0.3.0
-magacho/aitosql-mcp-server:v0.3.0
+flaviomagacho/aitosql:latest
+flaviomagacho/aitosql:0.3.0
+flaviomagacho/aitosql:v0.3.0
 ```
 
 ---
@@ -141,7 +141,7 @@ Para publicação no Docker Hub, configure no GitHub:
 
 ```bash
 # Build
-docker build -t magacho/aitosql-mcp-server:test .
+docker build -t flaviomagacho/aitosql:test .
 
 # Run com PostgreSQL
 docker run -d \
@@ -150,14 +150,14 @@ docker run -d \
   -e DB_PASSWORD="pass" \
   -e DB_TYPE="PostgreSQL" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:test
+  flaviomagacho/aitosql:test
 ```
 
 ### Produção (após publicação)
 
 ```bash
 # Pull da imagem
-docker pull magacho/aitosql-mcp-server:latest
+docker pull flaviomagacho/aitosql:latest
 
 # Run
 docker run -d \
@@ -165,7 +165,7 @@ docker run -d \
   -e DB_USERNAME="readonly" \
   -e DB_PASSWORD="secure_pass" \
   -p 8080:8080 \
-  magacho/aitosql-mcp-server:latest
+  flaviomagacho/aitosql:latest
 ```
 
 ---

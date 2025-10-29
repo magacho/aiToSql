@@ -5,7 +5,7 @@ Este guia explica como configurar o GitHub Actions para publicar automaticamente
 ## 📋 Pré-requisitos
 
 1. **Conta no Docker Hub**: https://hub.docker.com
-2. **Repositório Criado**: `magacho/aitosql-mcp-server`
+2. **Repositório Criado**: `flaviomagacho/aitosql`
 3. **Access Token do Docker Hub**: Necessário para autenticação segura
 
 ---
@@ -86,9 +86,9 @@ on:
 Quando você cria uma release `REL-0.3.0`, as seguintes tags são publicadas:
 
 ```bash
-magacho/aitosql-mcp-server:latest
-magacho/aitosql-mcp-server:0.3.0
-magacho/aitosql-mcp-server:v0.3.0
+flaviomagacho/aitosql:latest
+flaviomagacho/aitosql:0.3.0
+flaviomagacho/aitosql:v0.3.0
 ```
 
 ---
@@ -132,20 +132,20 @@ gh release create REL-0.3.0 \
 3. Verifique se o job **"Publicar Imagem Docker"** foi bem-sucedido
 
 ### 2. No Docker Hub
-1. Acesse: https://hub.docker.com/r/magacho/aitosql-mcp-server
+1. Acesse: https://hub.docker.com/r/flaviomagacho/aitosql
 2. Vá para **Tags**
 3. Verifique se as tags foram criadas
 
 ### 3. Testar Download
 ```bash
 # Pull da imagem
-docker pull magacho/aitosql-mcp-server:0.3.0
+docker pull flaviomagacho/aitosql:0.3.0
 
 # Verificar imagem
 docker images | grep aitosql
 
 # Testar execução
-docker run --rm magacho/aitosql-mcp-server:0.3.0 --version
+docker run --rm flaviomagacho/aitosql:0.3.0 --version
 ```
 
 ---
@@ -172,7 +172,7 @@ docker buildx build --platform linux/amd64,linux/arm64 .
 
 ### Erro: "requested access to the resource is denied"
 - **Causa**: Usuário não tem permissão no repositório
-- **Solução**: Verificar se o repositório `magacho/aitosql-mcp-server` existe e você tem acesso
+- **Solução**: Verificar se o repositório `flaviomagacho/aitosql` existe e você tem acesso
 
 ### Imagem não aparece no Docker Hub
 - **Causa**: Workflow pode ter falhado
