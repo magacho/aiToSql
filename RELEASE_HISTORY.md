@@ -136,6 +136,38 @@ Nenhum problema crítico conhecido nesta release.
 ---
 
 ## 📋 Versão 0.0.1-SNAPSHOT (Desenvolvimento Histórico)
+## 📋 Versão 0.3.1
+
+**Data**: 29 de October de 2025  
+**Status**: 🚀 Produção
+
+### 📊 Cobertura de Testes
+
+| Métrica | Valor | Status |
+|---------|-------|--------|
+| **Cobertura Total** | 75.5% | ⚠️ |
+| **Total de Testes** | 76 | ✅ |
+| **Testes com Falha** | 0 | ✅ |
+
+### ✨ Novas Funcionalidades
+
+- 🚀 **Auto-detecção de Driver JDBC**: Sistema agora detecta automaticamente o driver JDBC baseado na URL de conexão
+- 📝 Documentação atualizada no Docker Hub destacando a detecção automática
+
+### 🔧 Melhorias
+
+- Suporte automático para PostgreSQL, MySQL, Oracle e SQL Server sem necessidade de configurar `JDBC_DRIVER`
+- Mapeamento inteligente de URLs JDBC para classes de driver correspondentes
+- Simplificação da configuração Docker (apenas 3 variáveis obrigatórias: URL, usuário e senha)
+
+### 📦 Artefatos
+
+- JAR: aiToSql-0.3.1.jar
+- Docker Image: flaviomagacho/aitosql:0.3.1
+- Relatório JaCoCo: jacoco-0.3.1.zip
+
+---
+
 ## 📋 Versão 0.3.0
 
 **Data**: 29 de October de 2025  
